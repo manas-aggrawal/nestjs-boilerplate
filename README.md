@@ -1,6 +1,7 @@
 # Boiler plate focused on CMS backend
 ## This boilerplate covers
   - JWT Token configuration
+    - login & refresh token
   - Eslint
   - Swagger documentation
   - Dockercompose
