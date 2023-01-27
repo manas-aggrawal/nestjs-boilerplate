@@ -1,4 +1,5 @@
-# This boilerplate covers
+# Boiler plate focused on CMS backend
+## This boilerplate covers
   - JWT Token configuration
   - Eslint & prettier
   - Swagger documentation
