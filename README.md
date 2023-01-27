@@ -3,4 +3,5 @@
   - Eslint & prettier
   - Swagger documentation
   - Dockercompose
-  - Husky pre commit
+  - Husky
+  - Conventional Commits
