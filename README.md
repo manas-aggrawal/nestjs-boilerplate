@@ -5,6 +5,5 @@
   - Docker
   - Eslint
   - Swagger documentation
-  - Dockercompose
   - Husky
   - Conventional Commits
