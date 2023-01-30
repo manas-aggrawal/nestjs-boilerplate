@@ -4,8 +4,9 @@ services:
     image: postgres:14.6
     restart: always
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=${PG_USER}
+      - POSTGRES_PASSWORD=${PG_PASSWORD}
+      - POSTGRES_DB=${PG_DATABASE_NAME}
     ports:
       - ${PORT_DATABASE_LOCAL}:${PORT_DATABASE_CONTAINER}
   api:
@@ -16,6 +17,8 @@ services:
       - .env
     ports:
       - ${PORT_LOCAL}:${PORT_CONTAINER}
+    environment:
+      - DATABASE_URL=${DATABASE_URL_CONTAINER}
     depends_on:
       - db
     links:
