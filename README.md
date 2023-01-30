@@ -3,6 +3,7 @@
   - JWT Token configuration
     - login & refresh token
   - Docker
+  - Prisma
   - Eslint
   - Swagger documentation
   - Husky
