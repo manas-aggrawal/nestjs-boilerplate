@@ -3,7 +3,10 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-	const app = await NestFactory.create(AppModule);
+	const app = await NestFactory.create(AppModule, {
+		logger: console
+	});
+	const PORT = process.env.PORT_LOCAL || 3333;
 
 	const config = new DocumentBuilder()
 		.setTitle('Nest bp example')
@@ -14,6 +17,8 @@ async function bootstrap() {
 	const document = SwaggerModule.createDocument(app, config);
 	SwaggerModule.setup('docs', app, document);
 	
-	await app.listen(3000);
+	await app.listen(PORT);
+	console.log(`Server running on http://localhost:${PORT}`);
+
 }
 bootstrap();

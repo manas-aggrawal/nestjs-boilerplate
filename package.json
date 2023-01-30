@@ -7,6 +7,8 @@
   "license": "UNLICENSED",
   "scripts": {
     "prebuild": "rimraf dist",
+    "container": "docker exec -it nest-bp /bin/sh",
+    "container:rebuild": "docker compose down && docker image rm nest-bp && docker compose up",
     "build": "nest build",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -27,6 +29,7 @@
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/swagger": "^6.1.4",
     "commitlint": "^17.4.2",
+    "dotenv": "^16.0.3",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0"
