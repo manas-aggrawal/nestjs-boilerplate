@@ -1,7 +1,8 @@
-FROM node:18-alpine
+FROM node:lts
 WORKDIR /src
 ADD package*.json ./
-RUN npm i --legacy-peer-deps --silent
 ADD . /src
+RUN npm i --silent
 RUN npm run build
+RUN npx prisma generate
 CMD npm run start:dev
