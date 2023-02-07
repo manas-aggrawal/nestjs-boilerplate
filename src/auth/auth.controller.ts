@@ -3,6 +3,8 @@ import { AuthService } from './auth.service';
 import { IsPublic } from './decorators/isPublic';
 import { LocalGuard } from './guards/local.guard';
 import { RefreshTokenGuard } from './guards/refreshToken.guard';
+import { LoginSwaggerConfig } from './swagger/login.swagger';
+import { RefreshTokenSwaggerConfig } from './swagger/refreshToken.swagger';
 
 @Controller()
 export class AuthController {
@@ -10,6 +12,7 @@ export class AuthController {
 
 	@IsPublic()
 	@Post('/login')
+	@LoginSwaggerConfig()
 	@UseGuards(LocalGuard)
 	async login(@Request() req) {
 		return this.authService.giveTokens(req.user);
@@ -17,6 +20,7 @@ export class AuthController {
 
 	@IsPublic()
 	@UseGuards(RefreshTokenGuard)
+	@RefreshTokenSwaggerConfig()
 	@Get('/refresh-token')
 	async refreshToken(@Request() req) {
 		return this.authService.giveTokens(req.user);
