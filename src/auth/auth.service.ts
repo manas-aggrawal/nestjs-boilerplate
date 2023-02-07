@@ -20,7 +20,7 @@ export class AuthService {
 		if (user) {
 			const validatePassword = await bcrypt.compare(password, user.password);
 			if (validatePassword) {
-				return user;
+				return { ...user, password: undefined };
 			}
 		}
 		throw new UnauthorizedException({
