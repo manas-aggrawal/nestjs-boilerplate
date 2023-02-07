@@ -4,7 +4,7 @@
     - login & refresh token
   - Docker
   - Prisma
-  - Eslint
+  - Eslint & Prettier
   - Swagger documentation
   - Husky
   - Conventional Commits
