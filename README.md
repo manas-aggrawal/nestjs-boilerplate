@@ -1,5 +1,7 @@
 # README
 
+# README
+
 # Boiler plate focused on CMS backend
 
 ## This boilerplate covers
@@ -13,13 +15,13 @@
 - Husky
 - Conventional Commits
 
-## ****Project directory structure****
+## Project directory structure
 
 Nestjs architecture is based into modules, controllers and services. This boilerplate have the following core files:
 
 ```bash
 src
-|- ...
+|-...
 |- app.module.ts
 |- app.controller.ts
 |- app.service.ts
@@ -57,14 +59,14 @@ PG_USER="..."
 PG_PASSWORD="..."
 PG_DATABASE_NAME="..."
 
-# JWT 
+# JWT
 JWT_ACCESS_TOKEN_SECRET="..."
 JWT_REFRESH_TOKEN_SECRET="..."
 
 DATABASE_URL="..."
 ```
 
-> *In this same project, theres a file called `.env.example` that we can use as a example to set a standard configuration into `.env` file.*
+> In this same project, theres a file called .env.example that we can use as a example to set a standard configuration into .env file.
 > 
 
 ## Authentication
@@ -74,17 +76,17 @@ It provides 3 kinds of authentication with [Passport strategies](https://docs.ne
 - Local strategy
     - User provides an username and a password then if these are valid, the API returns with the tokens, else it will return Unauthorised.
     
-    > *mostly used in login/sign in routes*
+    > mostly used in login/sign in routes
     > 
 - Access token strategy
     - First token that is obtained from the local strategy. Is used to access all the routes of the API (with the exception of the refresh token one)
     
-    > *used in all the routes*
+    > used in all the routes
     > 
 - Refresh token strategy
     - Second token that is obtained from the local strategy. Is used to access the refresh-token route and obtain new tokens, who are not expired
     
-    > *used in the refresh token route*
+    > used in the refresh token route
     > 
 
 ## Add a new API
@@ -116,7 +118,7 @@ It provides 3 kinds of authentication with [Passport strategies](https://docs.ne
         ```tsx
         import { Module } from '@nestjs/common';
         @Module({
-        	imports: [..., <nameOfApi>Module],
+            imports: [..., <nameOfApi>Module],
           controllers: [...],
           providers: [...],
         })
@@ -124,19 +126,16 @@ It provides 3 kinds of authentication with [Passport strategies](https://docs.ne
         ```
         
     
-    > [click here some documentation about modules in Nest](https://docs.nestjs.com/modules)
+    > click here some documentation about modules in Nest
     > 
-3. Add a service for your API:
-Theres two ways to do that:
+3. Add a service for your API: Theres two ways to do that:
     1. Using Nest CLI
         
         ```bash
         nest generate service <nameOfAPI>
         ```
         
-    2. Creating a file, into your API root folder, with the following pattern:
-    `<nameOfAPI>.service.ts`
-    And add this code into that file:
+    2. Creating a file, into your API root folder, with the following pattern: `<nameOfAPI>.service.ts` And add this code into that file:
         
         ```tsx
         import { Injectable } from '@nestjs/common';
@@ -150,7 +149,7 @@ Theres two ways to do that:
         ```tsx
         import { Module } from '@nestjs/common';
         @Module({
-        	imports: [...],
+            imports: [...],
           controllers: [...],
           providers: [..., , <nameOfApi>Service],
         })
@@ -158,7 +157,7 @@ Theres two ways to do that:
         ```
         
     
-    > [click here some documentation about services in Nest](https://docs.nestjs.com/providers#services)
+    > click here some documentation about services in Nest
     > 
 4. (If your API needs routes) Add a controller for your API:
     
@@ -170,9 +169,7 @@ Theres two ways to do that:
         nest generate controller <nameOfAPI>
         ```
         
-    2. Creating a file, into your API root folder, with the following pattern:
-    `<nameOfAPI>.controller.ts`
-    And add this code into that file:
+    2. Creating a file, into your API root folder, with the following pattern: `<nameOfAPI>.controller.ts` And add this code into that file:
         
         ```tsx
         import { Controller } from '@nestjs/common';
@@ -186,7 +183,7 @@ Theres two ways to do that:
         ```tsx
         import { Module } from '@nestjs/common';
         @Module({
-        	imports: [...],
+            imports: [...],
           controllers: [..., <nameOfApi>Controller],
           providers: [...],
         })
@@ -209,16 +206,16 @@ import { Controller } from '@nestjs/common';
 
 @Controller()
 export class UserController {
-	constructor(private readonly userService: UserService) {}
+    constructor(private readonly userService: UserService) {}
 
-	@Get()
-	async getUsers() {
-		return this.userService.getAll()
-	}
+    @Get()
+    async getUsers() {
+        return this.userService.getAll()
+    }
 }
 ```
 
-> For use **services** in **controllers**, we have to inject through the constructor of **controller** class
+> For use services in controllers, we have to inject through the constructor of controller class
 > 
 
 ## Create a new schema (Prisma)
@@ -259,7 +256,7 @@ datasource db {
 model Post {
   id   String @id @default(uuid())
   name String
-	description String
+    description String
 }
 ```
 
@@ -270,6 +267,53 @@ npm run migrate:new
 ```
 
 Then we have to input the name of the migration and thats it!
+
+## Documentation with Swagger
+
+With Nest, we can add swagger documentation easier because it great integration. All we have to do is:
+
+1. Create an file in the root of our desired API folder with the following pattern:
+    
+    `<nameOfRoute>.swagger.ts`
+    
+    > *is preferred that the name of the file follow the name of the route.*
+    > 
+2. And it should contain a function that returns a function called `applyDecorators` that wrap swagger decorators, like this:
+    
+    ```tsx
+    import { applyDecorators } from '@nestjs/common';
+    
+    export const <nameOfRoute>SwaggerConfig = () =>
+    	applyDecorators(
+    		// Swagger decorators here...
+    	);
+    ```
+    
+    - *This function is a wrap of Decorators, so it could be used as a Decorator itself.*
+3. Then add this decorator in our route.
+    
+    ```tsx
+    	...
+    	@<nameOfRoute>SwaggerConfig()
+    	async <nameOfRoute>(@Request() req) {
+    		return this.authService.giveTokens(req.user);
+    	}
+    ```
+    
+
+Make sure swagger configuration is setup in `main.ts` file. Here an example of swagger config:
+
+```tsx
+...
+const config = new DocumentBuilder()
+		.setTitle('Nest bp example')
+		.setDescription('The Nestjs boilerplate API description')
+		.setVersion('1.0')
+		.build();
+	const document = SwaggerModule.createDocument(app, config);
+	SwaggerModule.setup('/docs', app, document);
+...
+```
 
 ## Commands
 
@@ -291,7 +335,7 @@ Then we have to input the name of the migration and thats it!
     ```
       npm run container:db:init
     ```
-
+    
 - Create a new migration (inside container)
     
     ```
