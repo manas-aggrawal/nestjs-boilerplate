@@ -13,6 +13,80 @@
 - Husky
 - Conventional Commits
 
+## ****Project directory structure****
+
+Nestjs architecture is based into modules, controllers and services. This boilerplate have the following core files:
+
+```bash
+src
+|- ...
+|- app.module.ts
+|- app.controller.ts
+|- app.service.ts
+|- main.ts
+|- ...
+```
+
+### app.module.ts
+
+- This is the most important file in this application. This module file essentially bundles all the controllers and providers of our application together.
+
+### app.controller.ts
+
+- In this file you will find all the routes related to our application itself, like a `/health` route to check application status.
+
+### app.service.ts
+
+- This service will include methods that will perform a certain operation. For example, a service to find all users.
+
+### main.ts
+
+- The entry file of our application, here you find the configs for our server and application in general like cors, ports, validation pipes and etc.
+
+## Secret management
+
+For store database configurations, jwt secrets and ports, this boilerplate uses a `.env` file with the following variables:
+
+```
+# Config
+PORT=...
+PORT_DATABASE=...
+
+# Postgres
+PG_USER="..."
+PG_PASSWORD="..."
+PG_DATABASE_NAME="..."
+
+# JWT 
+JWT_ACCESS_TOKEN_SECRET="..."
+JWT_REFRESH_TOKEN_SECRET="..."
+
+DATABASE_URL="..."
+```
+
+> *In this same project, theres a file called `.env.example` that we can use as a example to set a standard configuration into `.env` file.*
+> 
+
+## Authentication
+
+It provides 3 kinds of authentication with [Passport strategies](https://docs.nestjs.com/security/authentication):
+
+- Local strategy
+    - User provides an username and a password then if these are valid, the API returns with the tokens, else it will return Unauthorised.
+    
+    > *mostly used in login/sign in routes*
+    > 
+- Access token strategy
+    - First token that is obtained from the local strategy. Is used to access all the routes of the API (with the exception of the refresh token one)
+    
+    > *used in all the routes*
+    > 
+- Refresh token strategy
+    - Second token that is obtained from the local strategy. Is used to access the refresh-token route and obtain new tokens, who are not expired
+    
+    > *used in the refresh token route*
+    > 
+
 ## Add a new API
 
 1. Create a folder with the *name of the API* into the `src` folder your new API path should be: `.../nest-bp/src/nameOfAPI/`
@@ -147,6 +221,56 @@ export class UserController {
 > For use **services** in **controllers**, we have to inject through the constructor of **controller** class
 > 
 
+## Create a new schema (Prisma)
+
+Into the boilerplate, we should have a file called `schema.prisma` with this content:
+
+```tsx
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-arm64-openssl-1.1.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+```
+
+All we have to do is add a new model into this file, for example creating a `Post` model.
+
+```tsx
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-arm64-openssl-1.1.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Post {
+  id   String @id @default(uuid())
+  name String
+	description String
+}
+```
+
+And for it takes changes in the database, we should create a migration for that with the following command **(into the container)**:
+
+```bash
+npm run migrate:new
+```
+
+Then we have to input the name of the migration and thats it!
+
 ## Commands
 
 - Start project
@@ -166,6 +290,12 @@ export class UserController {
     
     ```
       npm run container:db:init
+    ```
+
+- Create a new migration (inside container)
+    
+    ```
+      npm run migrate:new
     ```
     
 - Migrate database (inside container)
