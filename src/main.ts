@@ -9,7 +9,7 @@ async function bootstrap() {
 		logger: new CustomLogger(),
 	});
 	app.useGlobalPipes(new ValidationPipe());
-	const PORT = process.env.PORT_LOCAL || 3333;
+	const PORT = process.env.PORT || 3333;
 
 	const config = new DocumentBuilder()
 		.setTitle('Nest bp example')
