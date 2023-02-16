@@ -13,6 +13,16 @@
 - Husky
 - Conventional Commits
 
+## File and folder naming conventions
+- Classes and interfaces Names will be singular and follow `PascalCasing`
+- Any global constants or environment variables are in `all-caps` and follow `SNAKE_CASE`
+- Variable name should be `camelCase`
+- Folder and file name will be singular and follow `kebab-case`
+- Exceptions:
+	- Module files should follow this pattern: `<name>.module.ts`
+	- Controller files should follow this pattern: `<name>.controller.ts`
+	- Service files should follow this pattern: `<name>.service.ts`
+  
 ## Project directory structure
 
 Nestjs architecture is based into modules, controllers and services. This boilerplate have the following core files:
