@@ -1,7 +1,5 @@
 # README
 
-# README
-
 # Boiler plate focused on CMS backend
 
 ## This boilerplate covers
