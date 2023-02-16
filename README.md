@@ -1,6 +1,6 @@
 # README
 
-# Boiler plate focused on CMS backend
+# NestJS Boilerplate
 
 ## This boilerplate covers
 
