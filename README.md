@@ -79,6 +79,15 @@ DATABASE_URL="..."
 ## Commit rules
 This project follows the Conventional Commits specification for creating standardized commit messages in our Git repository. This means that each commit message is structured in a consistent way, using a type, an optional scope, and a subject.
 
+Example:
+```
+<type>[optional scope]: <description>
+
+git commit -m "feat: create users"
+```
+
+*Commits without this pattern will be blocked.*
+
 More information at: [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/#summary)
 
 ## Authentication
