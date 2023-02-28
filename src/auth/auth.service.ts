@@ -58,8 +58,18 @@ export class AuthService {
 			},
 		});
 		if (user) {
-			// Send an email to user and return a jwt token with the secret password
-			return 'An email has been send to reset password';
+			// Send an email to user and retrieve a jwt token with the secret for forget password in our .env file
+			// in this case I'll send the token right away
+			const token = this.jwtService.sign(
+				{ ...user, password: undefined },
+				{
+					expiresIn: '15m',
+					secret: process.env.JWT_FORGOT_PASSWORD_SECRET,
+				},
+			);
+			return {
+				forgot_password_token: token,
+			};
 		}
 		throw new UnauthorizedException({
 			message: 'username is invalid',
