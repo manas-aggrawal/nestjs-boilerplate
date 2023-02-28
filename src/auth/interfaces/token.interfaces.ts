@@ -1,11 +1,12 @@
 export interface UserPayload {
-	sub: number;
+	sub: string;
+	id: string;
 	username: string;
 	iat?: number;
 	exp?: number;
 }
 
 export interface UserFromJwt {
-	id: number;
+	id: string;
 	username: string;
 }
