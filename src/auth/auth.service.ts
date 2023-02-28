@@ -77,6 +77,7 @@ export class AuthService {
 	}
 
 	async updatePassword(password: string, userId: string) {
-		return await this.userService.updateUserPassword(userId, password);
+		const encriptedPassword = await bcrypt.hash(password, 10);
+		return await this.userService.updateUserPassword(userId, encriptedPassword);
 	}
 }
