@@ -2,7 +2,7 @@ import { ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { Observable } from 'rxjs';
-import { IS_PUBLIC } from '../decorators/isPublic';
+import { IS_PUBLIC } from '../decorators/is-public';
 
 @Injectable()
 export class AccessTokenGuard extends AuthGuard('at-strategy') {
