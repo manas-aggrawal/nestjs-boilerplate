@@ -1,10 +1,10 @@
 import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { IsPublic } from './decorators/isPublic';
+import { IsPublic } from './decorators/is-public';
 import { LocalGuard } from './guards/local.guard';
-import { RefreshTokenGuard } from './guards/refreshToken.guard';
+import { RefreshTokenGuard } from './guards/refresh-token.guard';
 import { LoginSwaggerConfig } from './swagger/login.swagger';
-import { RefreshTokenSwaggerConfig } from './swagger/refreshToken.swagger';
+import { RefreshTokenSwaggerConfig } from './swagger/refresh-token.swagger';
 
 @Controller()
 export class AuthController {

@@ -12,6 +12,7 @@
 - Swagger documentation
 - Husky
 - Conventional Commits
+- CRUD
 
 ## File and folder naming conventions
 - Classes and interfaces Names will be singular and follow `PascalCasing`
@@ -322,6 +323,38 @@ const config = new DocumentBuilder()
 	SwaggerModule.setup('/docs', app, document);
 ...
 ```
+
+## CRUD
+
+With NestJS creating a CRUD API is very simple, we just need a command:
+
+`nest generate resource <nameOfAPI>` 
+
+It will create a folder structure in our `src` folder like this:
+
+```bash
+src
+|-...
+|- <nameOfAPI>
+	|- dto
+		|- create-<nameOfAPI>.dto.ts
+		|- update-<nameOfAPI>.dto.ts
+	|- entities
+		|- <nameOfAPI>.entity.ts
+	|- <nameOfAPI>.controller.spec
+	|- <nameOfAPI>.controller.ts
+	|- <nameOfAPI>.module.ts
+	|- <nameOfAPI>.crud-sample.service.spec
+	|- <nameOfAPI>.service.ts
+|- ...
+```
+
+- `.dto` files are data transfer objects, we use use it to verify body's of our HTTP requests;
+- `.spec` files are tests files to unit test our controller routes & services
+- `.entity` files are our API entities 
+
+Then we just have to implement our code into `<nameOfAPI>.service.ts` file.
+> For a manual implementation of this CRUD, theres a folder called `crud-sample` as a example of how to do it.
 
 ## Commands
 

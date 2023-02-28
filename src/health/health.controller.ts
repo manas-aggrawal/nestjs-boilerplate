@@ -1,4 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import {
 	HealthCheck,
 	HealthCheckService,
@@ -15,6 +16,7 @@ export class HealthController {
 	) {}
 
 	@Get('/health')
+	@ApiTags('Others')
 	@HealthCheck()
 	async check() {
 		const healthCheck = await this.health.check([
