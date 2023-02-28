@@ -1,6 +1,17 @@
-import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
+import {
+	Body,
+	Controller,
+	Get,
+	Patch,
+	Post,
+	Request,
+	UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { IsPublic } from './decorators/is-public';
+import { ForgotPasswordPayload } from './dto/forgot-password-payload.dto';
+import { UpdatePasswordPayload } from './dto/update-password-payload.dto';
+import { ForgotPasswordTokenGuard } from './guards/forgot-password-token.guard';
 import { LocalGuard } from './guards/local.guard';
 import { RefreshTokenGuard } from './guards/refresh-token.guard';
 import { LoginSwaggerConfig } from './swagger/login.swagger';
@@ -24,5 +35,24 @@ export class AuthController {
 	@Get('/refresh-token')
 	async refreshToken(@Request() req) {
 		return this.authService.giveTokens(req.user);
+	}
+
+	@IsPublic()
+	@Get('/forgot-password')
+	async forgotPassword(@Body() forgotPasswordPayload: ForgotPasswordPayload) {
+		return await this.authService.forgotPassword(forgotPasswordPayload);
+	}
+
+	@IsPublic()
+	@Patch('/update-password')
+	@UseGuards(ForgotPasswordTokenGuard)
+	async updatePassword(
+		@Body() updatePasswordPayload: UpdatePasswordPayload,
+		@Request() req,
+	) {
+		return await this.authService.updatePassword(
+			updatePasswordPayload.password,
+			req.user.id,
+		);
 	}
 }
