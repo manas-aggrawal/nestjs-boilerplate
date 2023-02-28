@@ -7,9 +7,10 @@ import { HealthModule } from './health/health.module';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import { PrismaModule } from './prisma/prisma.module';
 import { PrismaService } from './prisma/prisma.service';
+import { UserModule } from './user/user.module';
 
 @Module({
-	imports: [AuthModule, PrismaModule, HealthModule, CrudSampleModule],
+	imports: [AuthModule, PrismaModule, HealthModule, CrudSampleModule, UserModule],
 	providers: [
 		PrismaService,
 		{
