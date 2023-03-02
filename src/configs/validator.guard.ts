@@ -19,8 +19,7 @@ export class Validator implements CanActivate {
 		context: ExecutionContext,
 	): boolean | Promise<boolean> | Observable<boolean> {
 		const data = context.switchToHttp().getRequest()[this.type];
-		this.validate(data);
-		return true;
+		return this.validate(data);
 	}
 
 	validate(data: unknown) {
