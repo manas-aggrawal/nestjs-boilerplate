@@ -14,8 +14,7 @@ export class AuthController {
 	@IsPublic()
 	@Post('/login')
 	@LoginSwaggerConfig()
-	@UseGuards(new Validator(LoginPayloadDto, 'body'))
-	@UseGuards(LocalGuard)
+	@UseGuards(new Validator(LoginPayloadDto, 'body'), LocalGuard)
 	async login(@Request() req) {
 		return this.authService.giveTokens(req.user);
 	}
