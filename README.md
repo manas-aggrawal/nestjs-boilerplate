@@ -12,6 +12,7 @@
 - Swagger documentation
 - Husky
 - Conventional Commits
+- Validation with joi
 
 ## File and folder naming conventions
 - Classes and interfaces Names will be singular and follow `PascalCasing`
@@ -334,6 +335,16 @@ const config = new DocumentBuilder()
 	const document = SwaggerModule.createDocument(app, config);
 	SwaggerModule.setup('/docs', app, document);
 ...
+```
+
+## Validation with joi
+
+In order to validate our body, query or params, we have to use `Validator` Guard in our routes.
+
+We just have to pass an Joi `Schema` and a HttpType, like `body`, `params`, `query`,for example:
+
+```
+	@UseGuards(new Validator(<Schema>, <HttpType>))
 ```
 
 ## Commands

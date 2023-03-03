@@ -1,11 +1,12 @@
 import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
+import { Validator } from 'src/configs/validator.guard';
 import { AuthService } from './auth.service';
 import { IsPublic } from './decorators/isPublic';
+import { LoginPayloadDto } from './dto/login.dto';
 import { LocalGuard } from './guards/local.guard';
 import { RefreshTokenGuard } from './guards/refreshToken.guard';
 import { LoginSwaggerConfig } from './swagger/login.swagger';
 import { RefreshTokenSwaggerConfig } from './swagger/refreshToken.swagger';
-
 @Controller()
 export class AuthController {
 	constructor(private readonly authService: AuthService) {}
@@ -13,7 +14,7 @@ export class AuthController {
 	@IsPublic()
 	@Post('/login')
 	@LoginSwaggerConfig()
-	@UseGuards(LocalGuard)
+	@UseGuards(new Validator(LoginPayloadDto, 'body'), LocalGuard)
 	async login(@Request() req) {
 		return this.authService.giveTokens(req.user);
 	}
