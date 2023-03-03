@@ -1,0 +1,844 @@
+# yamllint disable
+# rule-set version: v1.2.1
+# yamllint enable
+---
+rules:
+- id: "security_code_scan.SCS0019-1"
+  patterns:
+  - pattern-inside: |
+      [Authorize]
+      public class $CLZ {
+        ...
+      }
+  - pattern: |
+      [OutputCache]
+      public $RET $FOO(...)
+      {
+        ...
+      }
+  message: |
+    Having the annotation [OutputCache] will disable the annotation [Authorize] for
+    the requests following the first one.
+  languages:
+  - "csharp"
+  severity: "INFO"
+  metadata:
+    category: "security"
+    cwe: "CWE-524: Use of Cache Containing Sensitive Information"
+    primary_identifier: "security_code_scan.SCS0019-1"
+    secondary_identifiers:
+    - name: "SCS0019"
+      type: "security_code_scan_rule_id"
+      value: "SCS0019"
+- id: "security_code_scan.SCS0009-1"
+  mode: "taint"
+  pattern-sources:
+  - pattern: |
+      var $COOKIE = new HttpCookie(...);
+  pattern-sinks:
+  - pattern: "$COOKIE"
+  pattern-sanitizers:
+  - pattern: "$COOKIE.HttpOnly = true;"
+  message: |
+    The HttpOnly flag is not set for the cookie. An attacker could perform XSS with a malicious
+    script.
+  languages:
+  - "csharp"
+  severity: "WARNING"
+  metadata:
+    category: "security"
+    cwe: "CWE-1004: Sensitive Cookie Without 'HttpOnly' Flag"
+    primary_identifier: "security_code_scan.SCS0009-1"
+    secondary_identifiers:
+    - name: "SCS0009"
+      type: "security_code_scan_rule_id"
+      value: "SCS0009"
+- id: "security_code_scan.SCS0008-1"
+  mode: "taint"
+  pattern-sources:
+  - pattern: |
+      var $COOKIE = new HttpCookie(...);
+  pattern-sinks:
+  - pattern: "$COOKIE"
+  pattern-sanitizers:
+  - pattern: "$COOKIE.Secure = true;"
+  message: |
+    The Secure attribute for sensitive cookies in HTTPS sessions is not set, which could cause the
+    user agent to send those cookies in plaintext over an HTTP session.
+  languages:
+  - "csharp"
+  severity: "WARNING"
+  metadata:
+    category: "security"
+    cwe: "CWE-614: Sensitive Cookie in HTTPS Session Without ‘Secure’ Attribute"
+    primary_identifier: "security_code_scan.SCS0008-1"
+    secondary_identifiers:
+    - name: "SCS0008"
+      type: "security_code_scan_rule_id"
+      value: "SCS0008"
+- id: "security_code_scan.SCS0004-1"
+  patterns:
+  - pattern-inside: |
+      using System.Net;
+      ...
+  - pattern: "ServicePointManager.ServerCertificateValidationCallback += $CALLBACK;"
+  - metavariable-pattern:
+      metavariable: "$CALLBACK"
+      patterns:
+      - pattern-either:
+        - pattern: "$RETURNTYPE $FUNC(...) { return true; }"
+        - pattern: "(...) => true;"
+  message: |
+    When a certificate is invalid or malicious, it might allow an attacker to spoof a trusted
+    entity by interfering in the communication path between the host and client. The software might
+    connect to a malicious host while believing it is a trusted host, or the software might be
+    deceived into accepting spoofed data that appears to originate from a trusted host.
+  languages:
+  - "csharp"
+  severity: "WARNING"
+  metadata:
+    category: "security"
+    cwe: "CWE-295: Improper Certificate Validation"
+    primary_identifier: "security_code_scan.SCS0004-1"
+    secondary_identifiers:
+    - name: "SCS0004"
+      type: "security_code_scan_rule_id"
+      value: "SCS0004"
+- id: "security_code_scan.SCS0010-1"
+  patterns:
+  - pattern-inside: |
+      using System.Security.Cryptography;
+      ...
+  - pattern-either:
+    - pattern-regex: ".*DES\\.Create\\(\\);"
+    - pattern: "new DESCryptoServiceProvider();"
+    - pattern-regex: ".*TripleDES\\.Create\\(\\);"
+    - pattern: "new TripleDESCryptoServiceProvider();"
+    - pattern-regex: ".*RC2\\.Create\\(\\);"
+    - pattern: "new RC2CryptoServiceProvider();"
+  message: |
+    The use of a broken or risky cryptographic algorithm is an unnecessary risk that may result in
+    the exposure of sensitive information.
+  languages:
+  - "csharp"
+  severity: "WARNING"
+  metadata:
+    category: "security"
+    cwe: "CWE-327: Use of a Broken or Risky Cryptographic Algorithm"
+    primary_identifier: "security_code_scan.SCS0010-1"
+    secondary_identifiers:
+    - name: "SCS0010"
+      type: "security_code_scan_rule_id"
+      value: "SCS0010"
+- id: "security_code_scan.SCS0013-1"
+  patterns:
+  - pattern-inside: |
+      using System.Security.Cryptography;
+      ...
+  - metavariable-regex:
+      metavariable: "$CIPHER"
+      regex: "^(ECB|CBC|OFB|CFB|CTS)$"
+  - pattern: "CipherMode.$CIPHER"
+  message: |
+    The cipher text produced is susceptible to alteration by an adversary. The cipher provides no
+    way to detect that the data has been tampered with. If the cipher text can be controlled by an
+    attacker, it could be altered without detection. The use of AES in CBC mode with a HMAC is
+    recommended guaranteeing integrity and confidentiality.
+  languages:
+  - "csharp"
+  severity: "WARNING"
+  metadata:
+    category: "security"
+    cwe: "CWE-327: Use of a Broken or Risky Cryptographic Algorithm"
+    primary_identifier: "security_code_scan.SCS0013-1"
+    secondary_identifiers:
+    - name: "SCS0013"
+      type: "security_code_scan_rule_id"
+      value: "SCS0013"
+- id: "security_code_scan.SCS0006-1"
+  patterns:
+  - pattern-either:
+    - patterns:
+      - metavariable-regex:
+          metavariable: "$HASH_PROVIDER"
+          regex: "^(SHA1CryptoServiceProvider|MD5CryptoServiceProvider)$"
+      - pattern: "new $HASH_PROVIDER"
+    - patterns:
+      - metavariable-regex:
+          metavariable: "$HASH_CLASS"
+          regex: "^System.Security.Cryptography.(SHA1|MD5)$"
+      - pattern: "$HASH_CLASS.$METHOD();"
+  message: |
+    The use of a broken or risky cryptographic algorithm is an unnecessary risk that may result in
+    the exposure of sensitive information.
+  languages:
+  - "csharp"
+  severity: "WARNING"
+  metadata:
+    category: "security"
+    cwe: "CWE-327: Use of a Broken or Risky Cryptographic Algorithm"
+    primary_identifier: "security_code_scan.SCS0006-1"
+    secondary_identifiers:
+    - name: "SCS0006"
+      type: "security_code_scan_rule_id"
+      value: "SCS0006"
+- id: "security_code_scan.SCS0005-1"
+  patterns:
+  - pattern: "(Random $RNG).$METHOD(...);"
+  - focus-metavariable: "$RNG"
+  message: |
+    The use of a predictable random value can lead to vulnerabilities when used in certain security
+    critical contexts.
+  languages:
+  - "csharp"
+  severity: "WARNING"
+  metadata:
+    category: "security"
+    cwe: "CWE-338: Use of Cryptographically Weak Pseudo-Random Number Generator (PRNG)"
+    primary_identifier: "security_code_scan.SCS0005-1"
+    secondary_identifiers:
+    - name: "SCS0005"
+      type: "security_code_scan_rule_id"
+      value: "SCS0005"
+- id: "security_code_scan.SCS0016-1"
+  patterns:
+  - pattern: |
+      [$HTTPMETHOD]
+      public $RET $FOO(...) {
+        ...
+      }
+  - pattern-not: |
+      [ValidateAntiForgeryToken]
+      public $RET $FOO(...) {
+        ...
+      }
+  - metavariable-regex:
+      metavariable: "$HTTPMETHOD"
+      regex: "Http(Post|Delete|Patch|Put)"
+  message: |
+    An attacker could send a link to the victim. By visiting the
+    malicious link, a web page would trigger a POST request (because it is a
+    blind attack - the attacker doesn’t see a response from triggered request
+    and has no use from GET request and GET requests should not change a state
+    on the server by definition) to the website. The victim would not be able
+    to acknowledge that an action is made in the background, but his cookie
+    would be automatically submitted if he is authenticated to the website.
+    This attack does not require special interaction other than visiting a
+    website.
+  languages:
+  - "csharp"
+  severity: "WARNING"
+  metadata:
+    category: "security"
+    cwe: "CWE-352: Cross-Site Request Forgery (CSRF)"
+    primary_identifier: "security_code_scan.SCS0016-1"
+    secondary_identifiers:
+    - name: "SCS0016"
+      type: "security_code_scan_rule_id"
+      value: "SCS0016"
+- id: "security_code_scan.SCS0028-1"
+  patterns:
+  - pattern-not: "$OBJ.Deserialize(\"...\")"
+  - pattern-not: "$OBJ.UnsafeDeserialize(\"...\")"
+  - pattern-not: "$OBJ.UnsafeDeserializeMethodResponse(\"...\")"
+  - pattern-not: "$OBJ.ReadObject(\"...\")"
+  - pattern-not: "$OBJ.DeserializeFromString(\"...\")"
+  - pattern-not: "$OBJ.DeserializeFromReader(\"...\")"
+  - pattern-not: "$OBJ.DeserializeFromStream(\"...\")"
+  - pattern-not: "$OBJ.DeserializeRequest(\"...\")"
+  - pattern-not: "$OBJ.ToObject(\"...\")"
+  - pattern-not: "$OBJ.DeserializeResponse(\"...\")"
+  - pattern-not: "new System.Runtime.Serialization.DataContractSerializer(\"...\")"
+  - pattern-not: "new System.Runtime.Serialization.Json.DataContractJsonSerializer(\"...\")"
+  - pattern-not: "new System.Xml.Serialization.XmlSerializer(\"...\")"
+  - pattern-not: "new System.Resources.ResourceReader(\"...\")"
+  - pattern-not: "(System.Messaging.XmlMessageFormatter $E).Read(\"...\")"
+  - pattern-not: "(System.Messaging.BinaryMessageFormatter $E).Read(\"...\")"
+  - pattern-either:
+    - pattern: "$OBJ.Deserialize(...)"
+    - pattern: "$OBJ.UnsafeDeserialize(...)"
+    - pattern: "$OBJ.UnsafeDeserializeMethodResponse(...)"
+    - pattern: "$OBJ.ReadObject(...)"
+    - pattern: "$OBJ.DeserializeFromString(...)"
+    - pattern: "$OBJ.DeserializeFromReader(...)"
+    - pattern: "$OBJ.DeserializeFromStream(...)"
+    - pattern: "$OBJ.DeserializeRequest(...)"
+    - pattern: "$OBJ.ToObject(...)"
+    - pattern: "$OBJ.DeserializeResponse(...)"
+    - pattern: "new System.Runtime.Serialization.DataContractSerializer(...)"
+    - pattern: "new System.Runtime.Serialization.Json.DataContractJsonSerializer(...)"
+    - pattern: "new System.Xml.Serialization.XmlSerializer(...)"
+    - pattern: "new System.Resources.ResourceReader(...)"
+    - pattern: "(System.Messaging.XmlMessageFormatter $E).Read(...)"
+    - pattern: "(System.Messaging.BinaryMessageFormatter $E).Read(...)"
+  languages:
+  - "csharp"
+  message: |
+    The application deserializes untrusted data without sufficiently verifying that
+    the resulting data will be valid.
+  metadata:
+    category: "security"
+    cwe: "CWE-502: Deserialization of Untrusted Data"
+    primary_identifier: "security_code_scan.SCS0028-1"
+    secondary_identifiers:
+    - name: "SCS0028"
+      type: "security_code_scan_rule_id"
+      value: "SCS0028"
+  severity: "WARNING"
+- id: "security_code_scan.SCS0027-1"
+  mode: "taint"
+  pattern-sources:
+  - patterns:
+    - pattern: "$SRC"
+    - pattern-inside: |
+        public $RET $FUNC(...,$SRC,...){...}
+  pattern-sanitizers:
+  - pattern-either:
+    - pattern: "TryCreate(...)"
+    - pattern: "Action(...)"
+    - pattern: "HttpRouteUrl(...)"
+    - pattern: "RouteUrl(...)"
+  pattern-sinks:
+  - patterns:
+    - pattern-not-inside: |
+        if (IsLocalUrl(...)) {
+            ...
+            Redirect(...);
+            ...
+        }
+    - pattern-not-inside: |
+        if ($URL.IsLocalUrl(...)) {
+            ...
+            Redirect(...);
+            ...
+        }
+    - pattern-either:
+      - pattern: "Redirect(...)"
+      - pattern: "RedirectPermanent(...)"
+      - pattern: "RedirectToRoute(...)"
+      - pattern: "RedirectToRoutePermanent(...)"
+      - pattern: "new RedirectResult(...)"
+  languages:
+  - "csharp"
+  message: |
+    Unvalidated redirects occur when an application redirects a user to a
+    destination URL specified by a user supplied parameter that is not validated.
+    Such vulnerabilities can be used to facilitate phishing attacks.
+  metadata:
+    category: "security"
+    cwe: "CWE-601: URL Redirection to Untrusted Site ('Open Redirect')"
+    primary_identifier: "security_code_scan.SCS0027-1"
+    secondary_identifiers:
+    - name: "SCS0027"
+      type: "security_code_scan_rule_id"
+      value: "SCS0027"
+  severity: "WARNING"
+- id: "security_code_scan.SCS0001-1"
+  patterns:
+  - pattern-inside: |
+      using System.Diagnostics;
+      ...
+  - pattern-either:
+    - patterns:
+      - pattern: "Process.Start($ARG)"
+      - pattern-not: "Process.Start(\"...\")"
+    - pattern: "(Process $PROC).StartInfo.FileName = <...$ARG...>;"
+    - pattern: "(Process $PROC).StartInfo.Arguments = <...$ARG...>;"
+    - patterns:
+      - pattern-inside: |
+          $PSINFO = new ProcessStartInfo(...)
+          ...
+          Process.Start($PSINFO)
+      - pattern-either:
+        - pattern: "$PSINFO.Arguments = <...$ARG...>;"
+        - pattern: "$PSINFO.FileName = <...$ARG...>;"
+  message: |
+    The highlighted API is used to execute a system command. If unfiltered input is passed to this
+    API, it can lead to arbitrary command execution.
+  languages:
+  - "csharp"
+  severity: "ERROR"
+  metadata:
+    category: "security"
+    cwe: "CWE-78: Improper Neutralization of Special Elements used in an OS Command
+      ('OS Command Injection')"
+    primary_identifier: "security_code_scan.SCS0001-1"
+    secondary_identifiers:
+    - name: "SCS0001"
+      type: "security_code_scan_rule_id"
+      value: "SCS0001"
+- id: "security_code_scan.SCS0026-1.SCS0031-1"
+  patterns:
+  - pattern-either:
+    - patterns:
+      - pattern: "(DirectorySearcher $SOURCE).Filter = ..."
+      - pattern-not: "(DirectorySearcher $SOURCE).Filter = \"...\""
+    - patterns:
+      - pattern: "(DirectorySearcher $SOURCE).Path = ..."
+      - pattern-not: "(DirectorySearcher $SOURCE).Path = \"...\""
+  message: |
+    The software constructs all or part of an LDAP query using
+    externally-influenced input from an upstream component, but it does not
+    neutralize or incorrectly neutralizes special elements that could modify
+    the intended LDAP query when it is sent to a downstream component.
+  languages:
+  - "csharp"
+  severity: "WARNING"
+  metadata:
+    category: "security"
+    cwe: "CWE-90: Improper Neutralization of Special Elements used in an LDAP Query
+      (‘LDAP Injection’)"
+    primary_identifier: "security_code_scan.SCS0026-1.SCS0031-1"
+    secondary_identifiers:
+    - name: "SCS0026"
+      type: "security_code_scan_rule_id"
+      value: "SCS0026"
+    - name: "SCS0031"
+      type: "security_code_scan_rule_id"
+      value: "SCS0031"
+- id: "security_code_scan.SCS0002-1"
+  patterns:
+  - pattern-either:
+    - patterns:
+      - metavariable-regex:
+          metavariable: "$FUNC"
+          regex: "^(SqlQuery|ExecuteSqlCommand|ExecuteSqlCommandAsync|ExecuteSqlRaw|ExecuteSqlRawAsync|FromSqlRaw|FromSql|GetSqlStringCommand|ExecuteDataSet|ExecuteReader|ExecuteNonQuery|ExecuteScalar|CreateSQLQuery)$"
+      - pattern: "$DB.$FUNC($ARG, ...);"
+      - pattern-not: "$DB.$FUNC(\"...\", ...);"
+    - patterns:
+      - metavariable-regex:
+          metavariable: "$FUNC"
+          regex: "^(ExecuteQuery|ExecuteCommand)$"
+      - pattern-inside: |
+          using System.Data.Linq;
+          ...
+      - pattern: "(DataContext $CTX).$FUNC($ARG, ...)"
+    - patterns:
+      - metavariable-regex:
+          metavariable: "$IMPL"
+          regex: "^(SqlCommand|OracleCommand|NpgsqlCommand|MySqlCommand|EntityCommand|OdbcCommand|OleDbCommand|SqliteCommand)$"
+      - pattern-either:
+        - patterns:
+          - pattern: "new $IMPL($ARG, ...);"
+          - pattern-not: "new $IMPL(\"...\", ...);"
+        - patterns:
+          - pattern: "($IMPL $CMD).CommandText = <...$ARG...>;"
+          - pattern-not: "($IMPL $CMD).CommandText = \"...\";"
+    - patterns:
+      - metavariable-regex:
+          metavariable: "$FUNC"
+          regex: "^(ExecuteDataRow|ExecuteDataRowAsync|ExecuteDataset|ExecuteDatasetAsync|ExecuteNonQuery|ExecuteNonQueryAsync|ExecuteReader|ExecuteReaderAsync|ExecuteScalar|ExecuteScalarAsync|UpdateDataSet|UpdateDataSetAsync)$"
+      - pattern-inside: |
+          using MySql.Data.MySqlClient;
+          ...
+      - pattern: "MySqlHelper.$FUNC(\"...\", $ARG, ...);"
+    - patterns:
+      - pattern-inside: |
+          using Cassandra;
+          ...
+      - pattern: "(Session $SESS).Execute($ARG, ...);"
+      - pattern-not: "(Session $SESS).Execute(\"...\", ...);"
+  message: |
+    The method identified is susceptible to injection. The input should be validated and properly
+    escaped.
+  languages:
+  - "csharp"
+  severity: "ERROR"
+  metadata:
+    category: "security"
+    cwe: "CWE-89: Improper Neutralization of Special Elements used in an SQL Command
+      (‘SQL Injection’)"
+    primary_identifier: "security_code_scan.SCS0002-1"
+    secondary_identifiers:
+    - name: "SCS0002"
+      type: "security_code_scan_rule_id"
+      value: "SCS0002"
+- id: "security_code_scan.SCS0003-1"
+  patterns:
+  - pattern-inside: |
+      using System.Xml;
+      ...
+  - pattern-either:
+    - patterns:
+      - metavariable-regex:
+          metavariable: "$FUNC"
+          regex: "^(SelectNodes|SelectSingleNode|Compile|Evaluate|Matches|Select|SelectAncestors|SelectChildren|SelectDescendants)$"
+      - metavariable-regex:
+          metavariable: "$TY"
+          regex: "^(XPathNavigator|XmlDocument|XmlNode|XmlDocumentXPathExtensions)$"
+      - pattern: "($TY $VAR).$FUNC(<...$ARG...>, ...)"
+      - pattern-not: "($TY $VAR).$FUNC(\"...\", ...)"
+    - patterns:
+      - pattern-inside: |
+          using System.Xml.Linq;
+          ...
+      - metavariable-regex:
+          metavariable: "$FUNC"
+          regex: "^(XPathEvaluate|XPathSelectElement|XPathSelectElements)$"
+      - pattern: "$VAR.$FUNC(<...$ARG...>, ...)"
+      - pattern-not: "$VAR.$FUNC(\"...\", ...)"
+    - patterns:
+      - pattern-inside: |
+          using System.Xml.Schema;
+          ...
+      - pattern-either:
+        - patterns:
+          - pattern: "$VAR.XPath = <...$ARG...>;"
+          - pattern-not: "$VAR.XPath = \"...\""
+        - patterns:
+          - pattern: "new XmlSchemaXPath { XPath = <...$ARG...> };"
+          - focus-metavariable: "$ARG"
+  message: |
+    The method identified is susceptible to injection. The input should be validated and properly
+    escaped.
+  languages:
+  - "csharp"
+  severity: "INFO"
+  metadata:
+    category: "security"
+    cwe: "CWE-643: Improper Neutralization of Data within XPath Expressions (‘XPath
+      Injection’)"
+    primary_identifier: "security_code_scan.SCS0003-1"
+    secondary_identifiers:
+    - name: "SCS0003"
+      type: "security_code_scan_rule_id"
+      value: "SCS0003"
+- id: "security_code_scan.SCS0007-1"
+  mode: "taint"
+  pattern-sanitizers:
+  - pattern: "(XmlReaderSettings $SETTINGS).ProhibitDtd = true;"
+  - pattern: "(XmlReaderSettings $SETTINGS).DtdProcessing = DtdProcessing.Prohibit;"
+  - pattern: "(XmlDocument $DOC).XmlResolver = null;"
+  - pattern: "var $DOC = new XmlDocument { ..., XmlResolver = null, ... };"
+  pattern-sinks:
+  - pattern: "XmlReader.Create(..., $SETTINGS);"
+  - pattern: "(XmlDocument $DOC).Load(...);"
+  pattern-sources:
+  - pattern: "var $SETTINGS = new XmlReaderSettings();"
+  - pattern: "var $DOC = new XmlDocument(...);"
+  - pattern: "var $DOC = new XmlDocument {...};"
+  message: |
+    The method identified is susceptible to injection. The input should be validated and properly
+    escaped.
+  languages:
+  - "csharp"
+  severity: "WARNING"
+  metadata:
+    category: "security"
+    cwe: "CWE-611: Improper Restriction of XML External Entity Reference (‘XXE’)"
+    primary_identifier: "security_code_scan.SCS0007-1"
+    secondary_identifiers:
+    - name: "SCS0007"
+      type: "security_code_scan_rule_id"
+      value: "SCS0007"
+- id: "security_code_scan.SCS0012-1"
+  patterns:
+  - pattern-inside: |
+      using System.Web.Mvc;
+      ...
+  - pattern-either:
+    - pattern: |
+        [$ANNO]
+        class $CLASS : Controller{ ... }
+    - pattern: |
+        class $CLASS : Controller{ ... }
+  - pattern-not: |
+      [AllowAnonymous]
+      class $CLASS : Controller{ ... }
+  - pattern-not: |
+      [Authorize]
+      class $CLASS : Controller{ ... }
+  message: |
+    The endpoint is potentially accessible to not authorized users. If it contains sensitive
+    information, like log files for example, it may lead to privilege escalation.
+  languages:
+  - "csharp"
+  severity: "WARNING"
+  metadata:
+    category: "security"
+    cwe: "CWE-284: Improper Access Control"
+    primary_identifier: "security_code_scan.SCS0012-1"
+    secondary_identifiers:
+    - name: "SCS0012"
+      type: "security_code_scan_rule_id"
+      value: "SCS0012"
+- id: "security_code_scan.SCS0011-1"
+  patterns:
+  - pattern-either:
+    - pattern: "new XsltSettings() {EnableScript = true};"
+    - pattern: |
+        var $SETTINGS = new XsltSettings();
+        ...
+        $SETTINGS.EnableScript = true;
+  message: |
+    The method identified is susceptible to injection. The input should be validated and properly
+    escaped.
+  languages:
+  - "csharp"
+  severity: "WARNING"
+  metadata:
+    category: "security"
+    cwe: "CWE-611: Improper Restriction of XML External Entity Reference"
+    primary_identifier: "security_code_scan.SCS0011-1"
+    secondary_identifiers:
+    - name: "SCS0011"
+      type: "security_code_scan_rule_id"
+      value: "SCS0011"
+- id: "security_code_scan.SCS0032-1.SCS0033-1.SCS0034-1"
+  patterns:
+  - pattern: |
+      new PasswordValidator
+      {
+        ...,
+      };
+  - pattern: |
+      new PasswordValidator
+      {
+        ...,
+        RequiredLength = $LEN,
+        ...,
+      };
+  - pattern-not: |
+      new PasswordValidator
+      {
+        ...,
+        RequireNonLetterOrDigit = true,
+        ...,
+      };
+  - pattern-not: |
+      new PasswordValidator
+      {
+        ...,
+        RequireDigit = true,
+        ...,
+      };
+  - pattern-not: |
+      new PasswordValidator
+      {
+        ...,
+        RequireLowercase = true,
+        ...,
+      };
+  - pattern-not: |
+      new PasswordValidator
+      {
+        ...,
+        RequireUppercase = true,
+        ...,
+      };
+  - metavariable-comparison:
+      metavariable: "$LEN"
+      comparison: "$LEN < 8"
+  message: |
+    The product does not require that users should have strong passwords, which
+    makes it easier for attackers to compromise user accounts.
+  languages:
+  - "csharp"
+  severity: "WARNING"
+  metadata:
+    category: "security"
+    cwe: "CWE-521: Weak Password Requirements"
+    primary_identifier: "security_code_scan.SCS0032-1.SCS0033-1.SCS0034-1"
+    secondary_identifiers:
+    - name: "SCS0032"
+      type: "security_code_scan_rule_id"
+      value: "SCS0032"
+    - name: "SCS0033"
+      type: "security_code_scan_rule_id"
+      value: "SCS0033"
+    - name: "SCS0034"
+      type: "security_code_scan_rule_id"
+      value: "SCS0034"
+- id: "security_code_scan.SCS0018-1"
+  mode: "taint"
+  pattern-sources:
+  - patterns:
+    - pattern-inside: |
+        public class $CLASS : Controller {
+          ...
+        }
+    - pattern: "$PARAM"
+    - pattern-either:
+      - patterns:
+        - metavariable-regex:
+            metavariable: "$HTTP_ANNO"
+            regex: "^(Http)"
+        - pattern-inside: |
+            [$HTTP_ANNO]
+            public string $METHOD(...,$PARAM,...){...}
+      - pattern-inside: |
+          public IActionResult $METHOD(...,$PARAM,...){...}
+  pattern-sanitizers:
+  - pattern-either:
+    - pattern: "(Microsoft.Extensions.FileProviders.PhysicalFileProvider $E).GetFileInfo(...)"
+    - pattern: "(System.Web.HttpServerUtility $E).MapPath(...)"
+    - pattern: "(System.Web.HttpServerUtilityBase $E).MapPath(...)"
+    - pattern: "(System.Web.HttpRequest $E).MapPath(...)"
+  pattern-sinks:
+  - pattern-either:
+    - pattern: "System.IO.Directory.Delete(...)"
+    - pattern: "System.IO.Directory.GetFiles(...)"
+    - pattern: "System.IO.Directory.Move(...)"
+    - pattern: "System.IO.File.AppendAllLines(...)"
+    - pattern: "System.IO.File.AppendAllLinesAsync(...)"
+    - pattern: "System.IO.File.AppendAllText(...)"
+    - pattern: "System.IO.File.AppendAllTextAsync(...)"
+    - pattern: "System.IO.File.AppendText(...)"
+    - pattern: "System.IO.File.Copy(...)"
+    - pattern: "System.IO.File.Create(...)"
+    - pattern: "System.IO.File.CreateText(...)"
+    - pattern: "System.IO.File.Delete(...)"
+    - pattern: "System.IO.File.Move(...)"
+    - pattern: "System.IO.File.Open(...)"
+    - pattern: "System.IO.File.OpenRead(...)"
+    - pattern: "System.IO.File.OpenText(...)"
+    - pattern: "System.IO.File.OpenWrite(...)"
+    - pattern: "System.IO.File.ReadAllBytes(...)"
+    - pattern: "System.IO.File.ReadAllBytesAsync(...)"
+    - pattern: "System.IO.File.ReadAllLines(...)"
+    - pattern: "System.IO.File.ReadAllLinesAsync(...)"
+    - pattern: "System.IO.File.ReadAllText(...)"
+    - pattern: "System.IO.File.ReadAllTextAsync(...)"
+    - pattern: "System.IO.File.ReadLines(...)"
+    - pattern: "System.IO.File.Replace(...)"
+    - pattern: "System.IO.File.SetAccessControl(...)"
+    - pattern: "System.IO.File.WriteAllBytes(...)"
+    - pattern: "System.IO.File.WriteAllBytesAsync(...)"
+    - pattern: "System.IO.File.WriteAllLines(...)"
+    - pattern: "System.IO.File.WriteAllLinesAsync(...)"
+    - pattern: "System.IO.File.WriteAllText(...)"
+    - pattern: "System.IO.File.WriteAllTextAsync(...)"
+    - pattern: "new System.IO.FileInfo(...)"
+    - pattern: "(System.IO.FileInfo $E).CopyTo(...)"
+    - pattern: "(System.IO.FileInfo $E).MoveTo(...)"
+    - pattern: "(System.IO.FileInfo $E).Replace(...)"
+    - pattern: "System.Reflection.Assembly.LoadFile(...)"
+    - pattern: "System.Reflection.Assembly.LoadFrom(...)"
+    - pattern: "System.Reflection.Assembly.ReflectionOnlyLoadFrom(...)"
+    - pattern: "System.Reflection.Assembly.UnsafeLoadFrom(...)"
+    - pattern: "System.AppDomain.AppendPrivatePath(...)"
+    - pattern: "System.Xml.XmlReader.Create(...)"
+    - pattern: "new System.IO.StreamReader.ctor(...)"
+    - pattern: "new System.IO.StreamWriter.ctor(...)"
+    - pattern: "new System.IO.FileStream.ctor(...)"
+    - pattern: "new System.Web.Mvc.FilePathResult(...)"
+    - pattern: "new Microsoft.AspNetCore.Mvc.PhysicalFileResult(...)"
+    - pattern: "(Microsoft.AspNetCore.Mvc.RazorPages.PageModel $E).PhysicalFile(...)"
+    - pattern: "(System.Web.UI.WebControls.FileUpload $E).SaveAs(...)"
+    - pattern: "(System.Web.HttpResponse $E).TransmitFile(...)"
+    - pattern: "(System.Web.HttpResponse $E).WriteFile(...)"
+    - pattern: "(System.Web.HttpResponseBase $E).TransmitFile(...)"
+    - pattern: "(System.Web.HttpResponseBase $E).WriteFile(...)"
+    - pattern: "(System.IO.Compression.ZipFileExtensions $E).CreateEntryFromFile(...)"
+    - pattern: "(System.IO.Compression.ZipFileExtensions $E).ExtractToFile(...)"
+    - pattern: "(System.IO.Compression.ZipFileExtensions $E).ExtractToDirectory(...)"
+    - pattern: "(System.Net.WebClient $E).DownloadFile(...)"
+    - pattern: "(System.Net.WebClient $E).DownloadFileAsync(...)"
+    - pattern: "(System.Net.WebClient $E).DownloadFileTaskAsync(...)"
+  message: |
+    The software uses external input to construct a pathname that is intended
+    to identify a file or directory that is located underneath a restricted
+    parent directory, but the software does not properly neutralize special
+    elements within the pathname that can cause the pathname to resolve to a
+    location that is outside of the restricted directory..
+  metadata:
+    cwe: "CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path
+      Traversal')"
+    primary_identifier: "security_code_scan.SCS0018-1"
+    secondary_identifiers:
+    - name: "SCS0018"
+      type: "security_code_scan_rule_id"
+      value: "SCS0018"
+  severity: "WARNING"
+  languages:
+  - "csharp"
+- id: "security_code_scan.SCS0017-1"
+  patterns:
+  - pattern: |
+      [ValidateInput(false)]
+      public $RET $FOO(...)
+      {
+        ...
+      }
+  message: |
+    Input validation is a first line of defence for a variety of different
+    attacks and should be enabled per default. Please do not forget to use
+    @Html.AntiForgeryToken() in your view.
+  languages:
+  - "csharp"
+  severity: "WARNING"
+  metadata:
+    category: "security"
+    cwe: "CWE-554: ASP.NET Misconfiguration: Not Using Input Validation Framework"
+    primary_identifier: "security_code_scan.SCS0017-1"
+    secondary_identifiers:
+    - name: "SCS0017"
+      type: "security_code_scan_rule_id"
+      value: "SCS0017"
+- id: "security_code_scan.SCS0029-1"
+  mode: "taint"
+  pattern-sources:
+  - patterns:
+    - pattern: "$PARAM"
+    - metavariable-regex:
+        metavariable: "$HTTP_ANNO"
+        regex: "^(Http)"
+    - pattern-inside: |
+        public class $CLASS : Controller {
+          ...
+        }
+    - pattern-inside: |
+        [$HTTP_ANNO]
+        public string $METHOD(...,$PARAM,...){...}
+  pattern-sanitizers:
+  - patterns:
+    - metavariable-regex:
+        metavariable: "$FUNC"
+        regex: "(SerializeObject|HtmlAttributeEncode|HtmlEncode|HtmlFormUrlEncode|UrlEncode|UrlPathEncode|XmlAttributeEncode|XmlEncode|Encode)"
+    - pattern: "$CLASS.$FUNC(...)"
+  pattern-sinks:
+  - pattern: "(System.Web.Mvc.HtmlHelper $E).Raw(...)"
+  - pattern: "(Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper $E).Raw(...)"
+  - pattern: "(System.Web.HttpResponse $E).AddHeader(...)"
+  - pattern: "(System.Web.HttpResponse $E).AppendHeader(...)"
+  - pattern: "(System.Web.HttpResponse $E).Write(...)"
+  - pattern: "(System.Web.HttpResponse $E).BinaryWrite(...)"
+  - pattern: "(System.Web.HttpResponse $E).TransmitFile(...)"
+  - pattern: "(System.Web.HttpResponse $E).WriteFile(...)"
+  - pattern: "(System.Web.HttpResponseBase $E).AddHeader(...)"
+  - pattern: "(System.Web.HttpResponseBase $E).AppendHeader(...)"
+  - pattern: "(System.Web.HttpResponseBase $E).Write(...)"
+  - pattern: "(System.Web.HttpResponseBase $E).BinaryWrite(...)"
+  - pattern: "(System.Web.HttpResponseBase $E).WriteFile(...)"
+  - pattern: "(System.Web.UI.HtmlTextWriter $E).AddAttribute(...)"
+  - pattern: "(System.Web.UI.HtmlTextWriter $E).AddStyleAttribute(...)"
+  - pattern: "(System.Web.UI.HtmlTextWriter $E).RenderBeginTag(...)"
+  - pattern: "(System.Web.UI.HtmlTextWriter $E).Write(...)"
+  - pattern: "(System.Web.UI.HtmlTextWriter $E).WriteAttribute(...)"
+  - pattern: "(System.Web.UI.HtmlTextWriter $E).WriteBeginTag(...)"
+  - pattern: "(System.Web.UI.HtmlTextWriter $E).WriteEndTag(...)"
+  - pattern: "(System.Web.UI.HtmlTextWriter $E).WriteFullBeginTag(...)"
+  - pattern: "(System.Web.UI.HtmlTextWriter $E).WriteStyleAttribute(...)"
+  - pattern: "(System.Web.UI.ClientScriptManager $E).RegisterStartupScript(...)"
+  - pattern: "(System.Web.UI.ClientScriptManager $E).RegisterClientScriptBlock(...)"
+  - pattern: "(System.Web.UI.Page $E).RegisterStartupScript(...)"
+  - pattern: "(System.Web.UI.Page $E).RegisterClientScriptBlock(...)"
+  - pattern: "return ...;"
+  languages:
+  - "csharp"
+  message: |
+    A potential XSS was found. The endpoint returns a variable from the client
+    input that has not been encoded. To protect against stored XSS attacks, make
+    sure any dynamic content coming from user or data store cannot be used to
+    inject JavaScript on a page. Most modern frameworks will escape dynamic content
+    by default automatically (Razor for example)
+  metadata:
+    category: "security"
+    cwe: "CWE-79: Improper Neutralization of Input During Web Page Generation (‘Cross-site
+      Scripting’)"
+    primary_identifier: "security_code_scan.SCS0029-1"
+    secondary_identifiers:
+    - name: "SCS0029"
+      type: "security_code_scan_rule_id"
+      value: "SCS0029"
+  severity: "WARNING"
