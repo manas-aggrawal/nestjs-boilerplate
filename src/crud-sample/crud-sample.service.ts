@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateCrudSampleDto } from './dto/create-crud-sample.dto';
-import { UpdateCrudSampleDto } from './dto/update-crud-sample.dto';
+import { CreateCrudSample } from './interfaces/create-crud-sample.interface';
+import { UpdateCrudSample } from './interfaces/update-crud-sample.interface';
 
 @Injectable()
 export class CrudSampleService {
@@ -16,9 +16,9 @@ export class CrudSampleService {
 		}
 	}
 
-	async create(createCrudSampleDto: CreateCrudSampleDto) {
+	async create(data: CreateCrudSample) {
 		return await this.prisma.crudSample.create({
-			data: createCrudSampleDto,
+			data,
 		});
 	}
 
@@ -35,11 +35,11 @@ export class CrudSampleService {
 		});
 	}
 
-	async update(id: string, updateCrudSampleDto: UpdateCrudSampleDto) {
+	async update(id: string, data: UpdateCrudSample) {
 		await this.verifyIfCrudSampleIdExist(id);
 		return await this.prisma.crudSample.update({
 			where: { id },
-			data: updateCrudSampleDto,
+			data,
 		});
 	}
 

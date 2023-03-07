@@ -1,29 +1,32 @@
 import {
-	Body,
 	Controller,
 	Delete,
 	Get,
 	Param,
 	Patch,
 	Post,
+	Request,
+	UseGuards,
 } from '@nestjs/common';
+import { Validator } from 'src/configs/validator.guard';
 import { CrudSampleService } from './crud-sample.service';
-import { CreateCrudSampleDto } from './dto/create-crud-sample.dto';
-import { UpdateCrudSampleDto } from './dto/update-crud-sample.dto';
 import { CreateSwaggerConfig } from './swagger/create.swagger';
 import { DeleteSwaggerConfig } from './swagger/delete.swagger';
 import { FindAllSwaggerConfig } from './swagger/find-all.swagger';
 import { FindOneSwaggerConfig } from './swagger/find-one.swagger';
 import { UpdateSwaggerConfig } from './swagger/update.swagger';
+import { CreateCrudSampleSchema } from './validators/create-crud-sample.schema';
+import { UpdateCrudSampleSchema } from './validators/update-crud-sample.schema';
 
 @Controller('crud-sample')
 export class CrudSampleController {
 	constructor(private readonly crudSampleService: CrudSampleService) {}
 
 	@Post('/')
+	@UseGuards(new Validator(CreateCrudSampleSchema, 'body'))
 	@CreateSwaggerConfig()
-	create(@Body() createCrudSampleDto: CreateCrudSampleDto) {
-		return this.crudSampleService.create(createCrudSampleDto);
+	create(@Request() req) {
+		return this.crudSampleService.create(req.body);
 	}
 
 	@Get('/')
@@ -39,12 +42,10 @@ export class CrudSampleController {
 	}
 
 	@Patch(':id')
+	@UseGuards(new Validator(UpdateCrudSampleSchema, 'body'))
 	@UpdateSwaggerConfig()
-	update(
-		@Param('id') id: string,
-		@Body() updateCrudSampleDto: UpdateCrudSampleDto,
-	) {
-		return this.crudSampleService.update(id, updateCrudSampleDto);
+	update(@Param('id') id: string, @Request() req) {
+		return this.crudSampleService.update(id, req.body);
 	}
 
 	@Delete(':id')
