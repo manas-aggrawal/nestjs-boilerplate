@@ -7,9 +7,11 @@ import {
 	Request,
 	UseGuards,
 } from '@nestjs/common';
+import { Validator } from 'src/configs/validator.guard';
 import { AuthService } from './auth.service';
 import { IsPublic } from './decorators/is-public';
 import { ForgotPasswordPayload } from './dto/forgot-password-payload.dto';
+import { LoginPayloadDto } from './dto/login.dto';
 import { UpdatePasswordPayload } from './dto/update-password-payload.dto';
 import { ForgotPasswordTokenGuard } from './guards/forgot-password-token.guard';
 import { LocalGuard } from './guards/local.guard';
@@ -24,7 +26,7 @@ export class AuthController {
 	@IsPublic()
 	@Post('/login')
 	@LoginSwaggerConfig()
-	@UseGuards(LocalGuard)
+	@UseGuards(new Validator(LoginPayloadDto, 'body'), LocalGuard)
 	async login(@Request() req) {
 		return this.authService.giveTokens(req.user);
 	}

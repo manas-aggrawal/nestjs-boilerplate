@@ -14,6 +14,7 @@
 - Conventional Commits
 - CRUD
 - Forgot Password
+- Validation with joi
 
 ## File and folder naming conventions
 - Classes and interfaces Names will be singular and follow `PascalCasing`
@@ -77,7 +78,20 @@ DATABASE_URL="..."
 ```
 
 > In this same project, theres a file called .env.example that we can use as a example to set a standard configuration into .env file.
-> 
+
+## Commit rules
+This project follows the Conventional Commits specification for creating standardized commit messages in our Git repository. This means that each commit message is structured in a consistent way, using a type, an optional scope, and a subject.
+
+Example:
+```
+<type>[optional scope]: <description>
+
+git commit -m "feat: create users"
+```
+
+*Commits without this pattern will be blocked.*
+
+More information at: [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/#summary)
 
 ## Authentication
 
@@ -379,6 +393,16 @@ The forgot password logic consist in two steps:
 	```
 
  	If the token is valid, the password will be updated.
+
+## Validation with joi
+
+In order to validate our body, query or params, we have to use `Validator` Guard in our routes.
+
+We just have to pass an Joi `Schema` and a HttpType, like `body`, `params`, `query`,for example:
+
+```
+	@UseGuards(new Validator(<Schema>, <HttpType>))
+```
 
 ## Commands
 

@@ -1,0 +1,837 @@
+# yamllint disable
+# rule-set version: v1.2.1
+# yamllint enable
+---
+rules:
+- id: "gosec.G504-1"
+  patterns:
+  - pattern: |
+      import "net/http/cgi"
+  message: |
+    Go versions < 1.6.3 are vulnerable to Httpoxy attack: (CVE-2016-5386)
+  metadata:
+    cwe: "CWE-327: Use of a Broken or Risky Cryptographic Algorithm"
+    owasp: "A9: Using Components with Known Vulnerabilities"
+    primary_identifier: "gosec.G504-1"
+    secondary_identifiers:
+    - name: "Gosec Rule ID G504"
+      type: "gosec_rule_id"
+      value: "G504"
+  severity: "WARNING"
+  languages:
+  - "go"
+- id: "gosec.G502-1"
+  patterns:
+  - pattern: |
+      import "crypto/des"
+  message: "Usage of a cryptographically broken primitive has been detected. It is
+    recommended that \nChaCha20 or Advanced Encryption Standard (AES) be used instead.\n"
+  metadata:
+    cwe: "CWE-327: Use of a Broken or Risky Cryptographic Algorithm"
+    owasp: "A9: Using Components with Known Vulnerabilities"
+    primary_identifier: "gosec.G502-1"
+    secondary_identifiers:
+    - name: "Gosec Rule ID G502"
+      type: "gosec_rule_id"
+      value: "G502"
+  severity: "WARNING"
+  languages:
+  - "go"
+- id: "gosec.G501-1"
+  patterns:
+  - pattern: |
+      import "crypto/md5"
+  message: |
+    The MD5 message-digest algorithm has been cryptographically broken and is unsuitable for
+    further use. It is recommended that the SHA-3, or BLAKE2 family of algorithms be used for
+    non-password based cryptographic hashes instead. For password based cryptographic hashes,
+    consider using the bcrypt or Argon2 family of cryptographic hashes.
+  metadata:
+    cwe: "CWE-327: Use of a Broken or Risky Cryptographic Algorithm"
+    owasp: "A9: Using Components with Known Vulnerabilities"
+    primary_identifier: "gosec.G501-1"
+    secondary_identifiers:
+    - name: "Gosec Rule ID G501"
+      type: "gosec_rule_id"
+      value: "G501"
+  severity: "WARNING"
+  languages:
+  - "go"
+- id: "gosec.G503-1"
+  patterns:
+  - pattern: |
+      import "crypto/rc4"
+  message: |
+    The RC4 stream-cipher has been cryptographically broken and is unsuitable
+    for use in production. It is recommended that ChaCha20 or Advanced Encryption
+    Standard (AES) be used instead.
+  metadata:
+    cwe: "CWE-327: Use of a Broken or Risky Cryptographic Algorithm"
+    owasp: "A9: Using Components with Known Vulnerabilities"
+    primary_identifier: "gosec.G503-1"
+    secondary_identifiers:
+    - name: "Gosec Rule ID G503"
+      type: "gosec_rule_id"
+      value: "G503"
+  severity: "WARNING"
+  languages:
+  - "go"
+- id: "gosec.G505-1"
+  patterns:
+  - pattern: |
+      import "crypto/sha1"
+  message: |
+    The SHA-1 message-digest algorithm has been cryptographically broken and
+    is unsuitable for further use. It is recommended that the SHA-3, or BLAKE2 family
+    of algorithms be used for non-password based cryptographic hashes instead. For
+    password based cryptographic hashes, consider using the bcrypt or Argon2 family
+    of cryptographic hashes.
+  metadata:
+    cwe: "CWE-327: Use of a Broken or Risky Cryptographic Algorithm"
+    owasp: "A9: Using Components with Known Vulnerabilities"
+    primary_identifier: "gosec.G505-1"
+    secondary_identifiers:
+    - name: "Gosec Rule ID G505"
+      type: "gosec_rule_id"
+      value: "G505"
+  severity: "WARNING"
+  languages:
+  - "go"
+- id: "gosec.G402-1"
+  patterns:
+  - pattern-either:
+    - pattern: |
+        tls.Config{..., CipherSuites: []$SLICE{..., $CIPHERS, ...}, ...}
+    - pattern: |
+        tls.CipherSuite{..., ID: $CIPHERS, ...}
+  - metavariable-regex:
+      metavariable: "$CIPHERS"
+      regex: "((?!tls.TLS_AES_128_GCM_SHA256)|(?!tls.TLS_AES_256_GCM_SHA384)|(?!tls.TLS_CHACHA20_POLY1305_SHA256)|
+        (?!tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256)|(?!tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256)|
+        (?!tls.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384)|(?!tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384)|
+        (?!tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305)|(?!tls.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256)|
+        (?!tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305)|(?!tls.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256)|
+        (?!tls.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256)|(?!tls.TLS_DHE_RSA_WITH_AES_256_GCM_SHA384))"
+  message: "Usage of a cryptographically insecure cipher suite has been detected.
+    It is recommended that \nalternative ciphers be used instead.\n"
+  metadata:
+    cwe: "CWE-327: Use of a Broken or Risky Cryptographic Algorithm"
+    owasp: "A9: Using Components with Known Vulnerabilities"
+    primary_identifier: "gosec.G402-1"
+    secondary_identifiers:
+    - name: "Gosec Rule ID G402"
+      type: "gosec_rule_id"
+      value: "G402"
+  severity: "WARNING"
+  languages:
+  - "go"
+- id: "gosec.G106-1"
+  patterns:
+  - pattern: "ssh.InsecureIgnoreHostKey(...)"
+  message: |
+    Audit the use of ssh.InsecureIgnoreHostKey
+  metadata:
+    cwe: "CWE-322: Key Exchange without Entity Authentication"
+    primary_identifier: "gosec.G106-1"
+    secondary_identifiers:
+    - name: "Gosec Rule ID G106"
+      type: "gosec_rule_id"
+      value: "G106"
+  severity: "WARNING"
+  languages:
+  - "go"
+- id: "gosec.G402-2"
+  patterns:
+  - pattern-either:
+    - pattern: "tls.VersionTLS11"
+    - pattern: "tls.VersionTLS10"
+  message: |
+    Use of deprecated TLS version which may result in the unauthorized retrieval
+    of sensitive information. It is recommended to use TLS 1.2 or TLS 1.3 instead.
+  metadata:
+    cwe: "CWE-310: Cryptographic Issues"
+    owasp: "A05:2021: Security Misconfiguration"
+    primary_identifier: "gosec.G402-2"
+    secondary_identifiers:
+    - name: "Gosec Rule ID G402"
+      type: "gosec_rule_id"
+      value: "G402"
+  languages:
+  - "go"
+  severity: "WARNING"
+- id: "gosec.G401-1"
+  patterns:
+  - pattern-either:
+    - pattern: |
+        des.NewCipher(...)
+    - pattern: |
+        des.NewTripleDESCipher(...)
+    - pattern: |
+        md5.New()
+    - pattern: |
+        md5.Sum(...)
+    - pattern: |
+        rc4.NewCipher(...)
+    - pattern: |
+        sha1.New()
+    - pattern: |
+        sha1.Sum(...)
+  message: |
+    Usage of a cryptographically insecure algorithm has been detected. It
+    is recommended that alternative algorithms be used instead.
+  metadata:
+    cwe: "CWE-327: Use of a Broken or Risky Cryptographic Algorithm"
+    owasp: "A9: Using Components with Known Vulnerabilities"
+    primary_identifier: "gosec.G401-1"
+    secondary_identifiers:
+    - name: "Gosec Rule ID G401"
+      type: "gosec_rule_id"
+      value: "G401"
+  severity: "WARNING"
+  languages:
+  - "go"
+- id: "gosec.G403-1"
+  patterns:
+  - pattern-either:
+    - pattern: |
+        rsa.GenerateKey(..., $ARG)
+  - metavariable-comparison:
+      metavariable: "$ARG"
+      comparison: "$ARG < 2048"
+  message: |
+    It is recommended that generated RSA keys are at least 2048 bits in length.
+  metadata:
+    cwe: "CWE-326: Inadequate Encryption Strength"
+    owasp: "A3: Sensitive Data Exposure"
+    primary_identifier: "gosec.G403-1"
+    secondary_identifiers:
+    - name: "Gosec Rule ID G403"
+      type: "gosec_rule_id"
+      value: "G403"
+  severity: "WARNING"
+  languages:
+  - "go"
+- id: "gosec.G404-1"
+  patterns:
+  - patterns:
+    - pattern-inside: |
+        import $IMPORT "math/rand"
+        ...
+    - pattern-not-inside: |
+        import "crypto/rand"
+    - pattern-either:
+      - pattern: "$IMPORT.$METHOD(...)"
+      - pattern: "rand.$METHOD(...)"
+  - metavariable-regex:
+      metavariable: "$METHOD"
+      regex: "(Float32|Float64|Int31|Int31n|Int63|Int63n|NormalFloat64|Uint32|Uint64)"
+  message: |
+    Use of weak random number generator (math/rand instead of crypto/rand)
+  metadata:
+    cwe: "CWE-338: Use of Cryptographically Weak Pseudo-Random Number Generator (PRNG)"
+    owasp: "A3: Sensitive Data Exposure"
+    primary_identifier: "gosec.G404-1"
+    secondary_identifiers:
+    - name: "Gosec Rule ID G404"
+      type: "gosec_rule_id"
+      value: "G404"
+  severity: "WARNING"
+  languages:
+  - "go"
+- id: "gosec.G302-1"
+  patterns:
+  - pattern-either:
+    - pattern: "os.Chmod(...,$MASK)"
+    - pattern: "os.OpenFile(...,$MASK)"
+  - metavariable-comparison:
+      metavariable: "$MASK"
+      comparison: "$MASK > 0o600"
+      base: 8
+  message: |
+    Poor file permissions used when creation file or using chmod
+  metadata:
+    cwe: "CWE-732: Incorrect Permission Assignment for Critical Resource"
+    owasp: "A6: Security Misconfiguration"
+    primary_identifier: "gosec.G302-1"
+    secondary_identifiers:
+    - name: "Gosec Rule ID G302"
+      type: "gosec_rule_id"
+      value: "G302"
+  severity: "WARNING"
+  languages:
+  - "go"
+- id: "gosec.G301-1"
+  patterns:
+  - pattern-either:
+    - pattern: "os.Mkdir(...,$MASK)"
+    - pattern: "os.MkdirAll(...,$MASK)"
+  - metavariable-comparison:
+      metavariable: "$MASK"
+      comparison: "$MASK > 0o600 and $MASK != 0o750"
+      base: 8
+  message: |
+    Poor file permissions used when creating a directory
+  metadata:
+    cwe: "CWE-732: Incorrect Permission Assignment for Critical Resource"
+    owasp: "A6: Security Misconfiguration"
+    primary_identifier: "gosec.G301-1"
+    secondary_identifiers:
+    - name: "Gosec Rule ID G301"
+      type: "gosec_rule_id"
+      value: "G301"
+  severity: "WARNING"
+  languages:
+  - "go"
+- id: "gosec.G110-1"
+  mode: "taint"
+  pattern-sinks:
+  - pattern: "io.Copy(...)"
+  - pattern: "io.CopyBuffer(...)"
+  pattern-sources:
+  - pattern: "gzip.NewReader(...)"
+  - pattern: "zlib.NewReader(...)"
+  - pattern: "bzip2.NewReader(...)"
+  - pattern: "flate.NewReader(...)"
+  - pattern: "lzw.NewReader(...)"
+  - pattern: "tar.NewReader(...)"
+  - pattern: "zip.NewReader(...)"
+  - pattern: "zlib.NewReaderDict(...)"
+  - pattern: "flate.NewReaderDict(...)"
+  - pattern: "zip.OpenReader(...)"
+  message: |
+    Potential DoS vulnerability via decompression bomb
+  metadata:
+    cwe: "CWE-409: Improper Handling of Highly Compressed Data"
+    primary_identifier: "gosec.G110-1"
+    secondary_identifiers:
+    - name: "Gosec Rule ID G110"
+      type: "gosec_rule_id"
+      value: "G110"
+  severity: "WARNING"
+  languages:
+  - "go"
+- id: "gosec.G111-1"
+  patterns:
+  - pattern-either:
+    - pattern: |
+        import $NET "net/http"
+        ...
+        $NET.Dir("/")
+    - pattern: |
+        import "net/http"
+        ...
+        http.Dir("/")
+  message: |
+    Potential directory traversal
+  metadata:
+    cwe: "CWE-23: Relative Path Traversal"
+    primary_identifier: "gosec.G111-1"
+    secondary_identifiers:
+    - name: "Gosec Rule ID G111"
+      type: "gosec_rule_id"
+      value: "G111"
+  severity: "WARNING"
+  languages:
+  - "go"
+- id: "gosec.G304-1"
+  patterns:
+  - pattern-not-inside: |
+      os.OpenFile(filepath.Clean(...), ...)
+  - pattern-not-inside: |
+      os.Open(filepath.Clean(...))
+  - pattern-not-inside: |
+      ioutil.ReadFile(filepath.Clean(...), ...)
+  - pattern-not-inside: |
+      os.OpenFile(filepath.Rel(...), ...)
+  - pattern-not-inside: |
+      os.Open(filepath.Rel(...))
+  - pattern-not-inside: |
+      ioutil.ReadFile(filepath.Rel(...), ...)
+  - pattern-not-inside: |
+      const $ARG = "..."
+      ...
+  - pattern-not-inside: |
+      var $Y string = "..."
+      ...
+      $ARG = $Y
+      ...
+  - pattern-not-inside: |
+      $ARG = filepath.Clean($X)
+      ...
+  - pattern-not-inside: |
+      $ARG = filepath.Rel($X)
+      ...
+  - pattern-not-inside: |
+      $ARG, ... := filepath.Rel("...", "...")
+      ...
+  - pattern-not: "os.OpenFile(\"...\" + strconv.Itoa($I), ...)"
+  - pattern-not: "os.OpenFile(\"...\", ...)"
+  - pattern-not: "os.Open(\"...\")"
+  - pattern-not: "os.Open(\"...\" + strconv.Itoa($I))"
+  - pattern-not: "ioutil.ReadFile(\"...\", ...)"
+  - pattern-not: "ioutil.ReadFile(\"...\" + strconv.Itoa($I), ...)"
+  - pattern-either:
+    - pattern: "os.OpenFile($ARG, ...)"
+    - pattern: "os.Open($ARG)"
+    - pattern: "ioutil.ReadFile($ARG, ...)"
+  message: |
+    File open from tainted variable
+  metadata:
+    cwe: "CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path
+      Traversal')"
+    primary_identifier: "gosec.G304-1"
+    secondary_identifiers:
+    - name: "Gosec Rule ID G304"
+      type: "gosec_rule_id"
+      value: "G304"
+  severity: "WARNING"
+  languages:
+  - "go"
+- id: "gosec.G306-1"
+  patterns:
+  - pattern-either:
+    - pattern: |
+        ioutil.WriteFile(..., ..., $ARG)
+  - metavariable-comparison:
+      metavariable: "$ARG"
+      comparison: "$ARG > 0o600"
+      base: 8
+  message: |
+    Expect WriteFile permissions to be 600 or less
+  metadata:
+    cwe: "CWE-276: Incorrect Default Permissions"
+    primary_identifier: "gosec.G306-1"
+    secondary_identifiers:
+    - name: "Gosec Rule ID G306"
+      type: "gosec_rule_id"
+      value: "G306"
+  severity: "WARNING"
+  languages:
+  - "go"
+- id: "gosec.G303-1"
+  patterns:
+  - pattern-either:
+    - pattern: |
+        ioutil.WriteFile("$ARG", ...)
+    - pattern: |
+        os.Create("$ARG")
+  - metavariable-regex:
+      metavariable: "$ARG"
+      regex: "(/tmp/.*|/var/tmp/.*)"
+  message: |
+    File creation in shared tmp directory without using ioutil.Tempfile
+  metadata:
+    cwe: "CWE-378: Creation of Temporary File With Insecure Permissions"
+    primary_identifier: "gosec.G303-1"
+    secondary_identifiers:
+    - name: "Gosec Rule ID G303"
+      type: "gosec_rule_id"
+      value: "G303"
+  severity: "WARNING"
+  languages:
+  - "go"
+- id: "gosec.G305-1"
+  mode: "taint"
+  pattern-sources:
+  - pattern: "zip.OpenReader(...)"
+  pattern-sinks:
+  - pattern: "filepath.Join(...)"
+  message: |
+    File traversal when extracting zip/tar archive
+  metadata:
+    cwe: "CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path
+      Traversal')"
+    primary_identifier: "gosec.G305-1"
+    secondary_identifiers:
+    - name: "Gosec Rule ID G305"
+      type: "gosec_rule_id"
+      value: "G305"
+  severity: "WARNING"
+  languages:
+  - "go"
+- id: "gosec.G114-1"
+  patterns:
+  - pattern-inside: |
+      import "net/http"
+      ...
+  - pattern-either:
+    - pattern: "http.ListenAndServe(...)"
+    - pattern: "http.ListenAndServeTLS(...)"
+    - pattern: "http.Serve(...)"
+    - pattern: "http.ServeTLS(...)"
+  message: |
+    The use of net/http serve functions without support for setting timeouts are susceptible to the
+    Slowloris class of attacks.
+  metadata:
+    cwe: "CWE-400: Uncontrolled Resource Consumption"
+    primary_identifier: "gosec.G114-1"
+    secondary_identifiers:
+    - name: "Gosec Rule ID G114"
+      type: "gosec_rule_id"
+      value: "G114"
+  severity: "WARNING"
+  languages:
+  - "go"
+- id: "gosec.G112-1"
+  patterns:
+  - pattern-inside: |
+      import "net/http"
+      ...
+  - pattern-either:
+    - patterns:
+      - pattern-not-inside: |
+          &http.Server{
+            ...,
+            ReadHeaderTimeout: ...,
+            ...,
+          }
+      - pattern-not-inside: |
+          &http.Server{
+            ...,
+            ReadTimeout: ...,
+            ...,
+          }
+      - pattern-not-inside: |
+          $S = &http.Server{
+            ...,
+          }
+          $S.ReadHeaderTimeout = ...
+          ...
+      - pattern-not-inside: |
+          $S = &http.Server{
+            ...,
+          }
+          $S.ReadTimeout = ...
+          ...
+      - pattern: |
+          &http.Server{
+            ...,
+          }
+  message: |
+    Potential Slowloris Attack because ReadHeaderTimeout is not configured in the http.Server
+  metadata:
+    cwe: "CWE-400: Uncontrolled Resource Consumption"
+    primary_identifier: "gosec.G112-1"
+    secondary_identifiers:
+    - name: "Gosec Rule ID G112"
+      type: "gosec_rule_id"
+      value: "G112"
+  severity: "WARNING"
+  languages:
+  - "go"
+- id: "gosec.G107-1"
+  patterns:
+  - pattern-either:
+    - patterns:
+      - pattern: "http.Get($URL)"
+      - pattern-not: "http.Get(\"...\")"
+    - patterns:
+      - pattern: "http.Head($URL)"
+      - pattern-not: "http.Head(\"...\")"
+    - patterns:
+      - pattern: "http.Post($URL, ...)"
+      - pattern-not: "http.Post(\"...\", ...)"
+    - patterns:
+      - pattern: "http.PostForm($URL, ...)"
+      - pattern-not: "http.PostForm(\"...\", ...)"
+    - patterns:
+      - pattern-inside: |
+          $REQ, ... := http.NewRequest(..., url, ...)
+          ...
+          $CLIENT := &http.Client{...}
+          ...
+      - pattern: "$CLIENT.Do($REQ)"
+    - patterns:
+      - pattern-not-inside: |
+          const $X = "..."
+          ...
+      - pattern-not-inside: |
+          var $Y string = "..."
+          ...
+          $X = $Y
+          ...
+      - pattern-not-inside: |
+          $Y := "..."
+          ...
+          $X = $Y
+          ...
+      - pattern: "http.Get($X)"
+  message: |
+    Url provided to HTTP request as taint input
+  metadata:
+    cwe: "CWE-88: Improper Neutralization of Argument Delimiters in a Command"
+    primary_identifier: "gosec.G107-1"
+    secondary_identifiers:
+    - name: "Gosec Rule ID G107"
+      type: "gosec_rule_id"
+      value: "G107"
+  severity: "WARNING"
+  languages:
+  - "go"
+- id: "gosec.G203-1"
+  patterns:
+  - pattern-either:
+    - patterns:
+      - pattern: "template.HTML($IN)"
+      - pattern-not: "template.HTML(\"...\")"
+    - patterns:
+      - pattern: "template.JS($IN)"
+      - pattern-not: "template.JS(\"...\")"
+    - patterns:
+      - pattern: "template.URL($IN)"
+      - pattern-not: "template.URL(\"...\")"
+    - patterns:
+      - pattern: "template.HTMLAttr($IN)"
+      - pattern-not: "template.HTMLAttr(\"...\")"
+  message: |
+    Use of unescaped data in HTML templates
+  metadata:
+    cwe: "CWE-79: Improper Neutralization of Input During Web Page Generation"
+    primary_identifier: "gosec.G203-1"
+    secondary_identifiers:
+    - name: "Gosec Rule ID G203"
+      type: "gosec_rule_id"
+      value: "G203"
+  severity: "WARNING"
+  languages:
+  - "go"
+- id: "gosec.G108-1"
+  patterns:
+  - pattern: |
+      import _ "net/http/pprof"
+  message: |
+    Profiling endpoint automatically exposed on /debug/pprof
+  metadata:
+    cwe: "CWE-200: Exposure of Sensitive Information to an Unauthorized Actor"
+    primary_identifier: "gosec.G108-1"
+    secondary_identifiers:
+    - name: "Gosec Rule ID G108"
+      type: "gosec_rule_id"
+      value: "G108"
+  severity: "ERROR"
+  languages:
+  - "go"
+- id: "gosec.G109-1"
+  patterns:
+  - pattern-either:
+    - patterns:
+      - pattern-inside: |
+          $X, ... := strconv.Atoi(...)
+          ...
+      - pattern-either:
+        - pattern: "int32($X)"
+        - pattern: "int16($X)"
+  message: |
+    Potential Integer overflow made by strconv.Atoi result conversion to int16/32
+  metadata:
+    cwe: "CWE-190: Integer Overflow or Wraparound"
+    primary_identifier: "gosec.G109-1"
+    secondary_identifiers:
+    - name: "Gosec Rule ID G109"
+      type: "gosec_rule_id"
+      value: "G109"
+  severity: "ERROR"
+  languages:
+  - "go"
+- id: "gosec.G113-1"
+  patterns:
+  - pattern-inside: |
+      import "math/big"
+      ...
+  - pattern-inside: |
+      $R = big.Rat{...}
+      ...
+  - pattern: |
+      $R.SetString(...)
+  message: |
+    Potential Integer overflow made by strconv.Atoi result conversion to int16/32
+  metadata:
+    cwe: "CWE-190: Integer Overflow or Wraparound"
+    primary_identifier: "gosec.G113-1"
+    secondary_identifiers:
+    - name: "Gosec Rule ID G113"
+      type: "gosec_rule_id"
+      value: "G113"
+  severity: "ERROR"
+  languages:
+  - "go"
+- id: "gosec.G601-1"
+  patterns:
+  - pattern-either:
+    - pattern: |
+        for _, $ARG := range $SLICE {
+          <... &($ARG) ...>
+        }
+    - pattern: |
+        for _, $ARG := range $SLICE {
+          <... func() { <... &$ARG ...> } ...>
+        }
+    - pattern: |
+        for _, $ARG := range $SLICE {
+          <... $X(..., <... &$ARG ...>, ...) ...>
+        }
+  - pattern-not: |
+      for _, $ARG := range $SLICE {
+        <... *$ARG ...>
+      }
+  - pattern-not-inside: |-
+      for _, $ARG := range $SLICE { return ... }
+  message: |
+    Implicit memory aliasing in for loop.
+  metadata:
+    cwe: "CWE-118: Incorrect Access of Indexable Resource ('Range Error')"
+    primary_identifier: "gosec.G601-1"
+    secondary_identifiers:
+    - name: "Gosec Rule ID G601"
+      type: "gosec_rule_id"
+      value: "G601"
+  severity: "WARNING"
+  languages:
+  - "go"
+- id: "gosec.G102-1"
+  patterns:
+  - pattern-either:
+    - pattern: "net.Listen(..., \"$ADDR\")"
+    - pattern: "tls.Listen(..., \"$ADDR\", ...)"
+  - metavariable-regex:
+      metavariable: "$ADDR"
+      regex: "0.0.0.0:[0-9]+"
+  message: |
+    Binding to all network interfaces can potentially open up a service to
+    traffic on unintended interfaces, that may not be properly documented or
+    secured. This plugin test looks for a string pattern “0.0.0.0” that may
+    indicate a hardcoded binding to all network interfaces.
+  metadata:
+    cwe: "CWE-200: Exposure of Sensitive Information to an Unauthorized Actor"
+    owasp: "A6: Security Misconfiguration"
+    primary_identifier: "gosec.G102-1"
+    secondary_identifiers:
+    - name: "Gosec Rule ID G102"
+      type: "gosec_rule_id"
+      value: "G102"
+  severity: "WARNING"
+  languages:
+  - "go"
+- id: "gosec.G101-1"
+  patterns:
+  - pattern-either:
+    - pattern: "$MASK = \"...\""
+  - metavariable-regex:
+      metavariable: "$MASK"
+      regex: "(password|pass|passwd|pwd|secret|token)"
+  message: |
+    The use of hard-coded passwords increases the possibility of password guessing tremendously.
+  metadata:
+    cwe: "CWE-259: Use of Hard-coded Password"
+    owasp: "A3: Broken Authentication and Session Management"
+    primary_identifier: "gosec.G101-1"
+    secondary_identifiers:
+    - name: "Gosec Rule ID G101"
+      type: "gosec_rule_id"
+      value: "G101"
+  severity: "ERROR"
+  languages:
+  - "go"
+- id: "gosec.G202-1"
+  patterns:
+  - pattern-inside: |
+      import "database/sql"
+      ...
+  - pattern-either:
+    - pattern: "$DB.Query($Q + $IN)"
+    - pattern: "$DB.QueryContext(..., $Q + $IN)"
+  - pattern-not: "$DB.QueryContext(..., \"...\" + \"...\")"
+  - pattern-not: "$DB.Query(\"...\" + \"...\")"
+  message: |
+    SQL query construction using string concatenation
+  metadata:
+    cwe: "CWE-89: Improper Neutralization of Special Elements used in an SQL Command"
+    primary_identifier: "gosec.G202-1"
+    secondary_identifiers:
+    - name: "Gosec Rule ID G202"
+      type: "gosec_rule_id"
+      value: "G202"
+  severity: "WARNING"
+  languages:
+  - "go"
+- id: "gosec.G201-1"
+  patterns:
+  - pattern-inside: |
+      $Q := fmt.Sprintf("$QUERY", ...)
+      ...
+  - pattern-not-inside: |
+      $Q := fmt.Sprintf("$QUERY", "...")
+      ...
+  - pattern-not-inside: |
+      pq.QuoteIdentifier(...)
+      ...
+  - metavariable-regex:
+      metavariable: "$QUERY"
+      regex: "(?i)(SELECT|DELETE|INSERT|UPDATE|INTO|FROM|WHERE).*%[^bdoxXfFp].*"
+  - pattern-either:
+    - pattern: "$DB.QueryContext(..., $Q)"
+    - pattern: "$DB.Query($Q)"
+  message: |
+    SQL query construction using format string
+  metadata:
+    cwe: "CWE-89: Improper Neutralization of Special Elements used in an SQL Command"
+    primary_identifier: "gosec.G201-1"
+    secondary_identifiers:
+    - name: "Gosec Rule ID G201"
+      type: "gosec_rule_id"
+      value: "G201"
+  severity: "WARNING"
+  languages:
+  - "go"
+- id: "gosec.G204-1"
+  patterns:
+  - pattern-either:
+    - patterns:
+      - pattern: "exec.CommandContext($CTX, $EXE, ...)"
+      - pattern-not: "exec.CommandContext($CTX, \"...\", ...)"
+    - patterns:
+      - pattern: "exec.Command($EXE, ...)"
+      - pattern-not: "exec.Command(\"...\", ...)"
+    - patterns:
+      - pattern: "syscall.ForkExec($EXE, ...)"
+      - pattern-not: "syscall.ForkExec(\"...\", ...)"
+    - patterns:
+      - pattern: "syscall.StartProcess($EXE, ...)"
+      - pattern-not: "syscall.StartProcess(\"...\", ...)"
+  message: |
+    Audit use of command execution
+  metadata:
+    cwe: "CWE-95: Improper Neutralization of Directives in Dynamically Evaluated Code
+      ('Eval Injection')"
+    owasp: "A1: Injection"
+    primary_identifier: "gosec.G204-1"
+    secondary_identifiers:
+    - name: "Gosec Rule ID G204"
+      type: "gosec_rule_id"
+      value: "G204"
+  severity: "WARNING"
+  languages:
+  - "go"
+- id: "gosec.G103-1"
+  patterns:
+  - pattern-either:
+    - pattern: "unsafe.Alignof(...)"
+    - pattern: "unsafe.Offsetof(...)"
+    - pattern: "unsafe.Sizeof(...)"
+    - pattern: "unsafe.Pointer(...)"
+  message: |
+    Using the unsafe package in Go gives you low-level memory management and many
+    of the strength of the C language but also gives flexibility to the attacker of
+    your application. The pointer arithmetic is one of the examples from the unsafe
+    package which can be used for data leak, memory corruption or even execution of
+    attackers own script.
+  metadata:
+    cwe: "CWE-242: Audit the use of unsafe block"
+    primary_identifier: "gosec.G103-1"
+    secondary_identifiers:
+    - name: "Gosec Rule ID G103"
+      type: "gosec_rule_id"
+      value: "G103"
+  severity: "INFO"
+  languages:
+  - "go"
