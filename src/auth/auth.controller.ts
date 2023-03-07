@@ -42,7 +42,7 @@ export class AuthController {
 	@UseGuards(new Validator(ForgotPasswordPayloadDto, 'body'))
 	@Get('/forgot-password')
 	async forgotPassword(@Request() req) {
-		return await this.authService.forgotPassword(req.body);
+		return await this.authService.forgotPassword(req.body.username);
 	}
 
 	@IsPublic()
