@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
-import { ForgotPasswordPayload } from './dto/forgot-password-payload.dto';
+import { ForgotPasswordPayload } from './dto/forgot-password.dto';
 import { DefaultPayload } from './interfaces/payload.interface';
 
 @Injectable()

@@ -1,5 +1,4 @@
 import {
-	Body,
 	Controller,
 	Get,
 	Patch,
@@ -10,9 +9,9 @@ import {
 import { Validator } from 'src/configs/validator.guard';
 import { AuthService } from './auth.service';
 import { IsPublic } from './decorators/is-public';
-import { ForgotPasswordPayload } from './dto/forgot-password-payload.dto';
+import { ForgotPasswordPayloadDto } from './dto/forgot-password.dto';
 import { LoginPayloadDto } from './dto/login.dto';
-import { UpdatePasswordPayload } from './dto/update-password-payload.dto';
+import { UpdatePasswordPayloadDto } from './dto/update-password.dto';
 import { ForgotPasswordTokenGuard } from './guards/forgot-password-token.guard';
 import { LocalGuard } from './guards/local.guard';
 import { RefreshTokenGuard } from './guards/refresh-token.guard';
@@ -40,20 +39,21 @@ export class AuthController {
 	}
 
 	@IsPublic()
+	@UseGuards(new Validator(ForgotPasswordPayloadDto, 'body'))
 	@Get('/forgot-password')
-	async forgotPassword(@Body() forgotPasswordPayload: ForgotPasswordPayload) {
-		return await this.authService.forgotPassword(forgotPasswordPayload);
+	async forgotPassword(@Request() req) {
+		return await this.authService.forgotPassword(req.body);
 	}
 
 	@IsPublic()
 	@Patch('/update-password')
-	@UseGuards(ForgotPasswordTokenGuard)
-	async updatePassword(
-		@Body() updatePasswordPayload: UpdatePasswordPayload,
-		@Request() req,
-	) {
+	@UseGuards(
+		new Validator(UpdatePasswordPayloadDto, 'body'),
+		ForgotPasswordTokenGuard,
+	)
+	async updatePassword(@Request() req) {
 		return await this.authService.updatePassword(
-			updatePasswordPayload.password,
+			req.body.password,
 			req.user.id,
 		);
 	}
