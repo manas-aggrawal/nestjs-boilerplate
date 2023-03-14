@@ -2,6 +2,7 @@ import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { UserService } from 'src/user/user.service';
 import { DefaultPayload } from './interfaces/payload.interface';
 
 @Injectable()
@@ -11,6 +12,7 @@ export class AuthService {
 	constructor(
 		private readonly prisma: PrismaService,
 		private readonly jwtService: JwtService,
+		private readonly userService: UserService,
 	) {}
 
 	async validateUser(usernameField: string, password: string) {
@@ -45,5 +47,35 @@ export class AuthService {
 			access_token,
 			refresh_token,
 		};
+	}
+
+	async forgotPassword(username: string) {
+		const user = await this.prisma.user.findFirst({
+			where: {
+				username,
+			},
+		});
+		if (user) {
+			// Send an email to user and retrieve a jwt token with the secret for forget password in our .env file
+			// in this case I'll send the token right away
+			const token = this.jwtService.sign(
+				{ ...user, password: undefined },
+				{
+					expiresIn: '15m',
+					secret: process.env.JWT_FORGOT_PASSWORD_SECRET,
+				},
+			);
+			return {
+				forgot_password_token: token,
+			};
+		}
+		throw new UnauthorizedException({
+			message: 'username is invalid',
+		});
+	}
+
+	async updatePassword(password: string, userId: string) {
+		const encriptedPassword = await bcrypt.hash(password, 10);
+		return await this.userService.updateUserPassword(userId, encriptedPassword);
 	}
 }
