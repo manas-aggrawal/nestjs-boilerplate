@@ -425,19 +425,19 @@ We just have to pass an Joi `Schema` and a HttpType, like `body`, `params`, `que
       npm run container:db:init
     ```
     
-- Create a new migration (inside container)
+- Create a new migration (inside container - run `npm run container:run` first)
     
     ```
       npm run migrate:new
     ```
     
-- Migrate database (inside container)
+- Migrate database (inside container - run `npm run container:run` first)
     
     ```
       npm run migrate
     ```
     
-- Seed database (inside container)
+- Seed database (inside container - run `npm run container:run` first)
     
     ```
       npm run seed
