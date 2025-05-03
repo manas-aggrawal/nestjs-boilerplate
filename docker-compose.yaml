@@ -10,7 +10,10 @@ services:
     ports:
       - ${PORT_DATABASE}:${PORT_DATABASE}
   api:
-    build: .
+    build:
+      context: .
+      args:
+        NPM_TOKEN: ${NPM_TOKEN}
     container_name: nest-bp
     image: nest-bp
     env_file:

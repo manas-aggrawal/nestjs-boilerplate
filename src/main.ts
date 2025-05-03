@@ -1,13 +1,15 @@
-import { Logger, ValidationPipe } from '@nestjs/common';
+import { adotInit, logger } from '@studiographene/nodejs-telemetry';
+adotInit('Pulse@1.0', '/health');
+
+import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import { CustomLogger } from './configs/logger';
+
+// import { CustomLogger } from './configs/logger';
 
 async function bootstrap() {
-	const app = await NestFactory.create(AppModule, {
-		logger: new CustomLogger(),
-	});
+	const app = await NestFactory.create(AppModule);
 	app.useGlobalPipes(new ValidationPipe());
 	const PORT = process.env.PORT || 3333;
 
@@ -30,6 +32,6 @@ async function bootstrap() {
 	SwaggerModule.setup('/docs', app, document);
 
 	await app.listen(PORT);
-	Logger.log(`Server running on http://localhost:${PORT}`, 'App');
+	logger.info(`Server running on http://localhost:${PORT}`, 'App');
 }
 bootstrap();

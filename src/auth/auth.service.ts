@@ -4,6 +4,7 @@ import * as bcrypt from 'bcryptjs';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
 import { DefaultPayload } from './interfaces/payload.interface';
+import { traceDecorator } from '@studiographene/nodejs-telemetry';
 
 @Injectable()
 export class AuthService {
@@ -32,6 +33,7 @@ export class AuthService {
 		});
 	}
 
+	@traceDecorator
 	async giveTokens(payload: DefaultPayload) {
 		const [access_token, refresh_token] = await Promise.all([
 			this.jwtService.sign(payload, {

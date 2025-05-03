@@ -17,6 +17,7 @@ import { RefreshTokenSwaggerConfig } from './swagger/refresh-token.swagger';
 import { ForgotPasswordSchema } from './validators/forgot-password.schema';
 import { LoginSchema } from './validators/login.schema';
 import { UpdatePasswordSchema } from './validators/update-password.dto';
+import { traceDecorator } from 'src/core/trace-decorator';
 
 @Controller()
 export class AuthController {
@@ -26,6 +27,7 @@ export class AuthController {
 	@Post('/login')
 	@LoginSwaggerConfig()
 	@UseGuards(new Validator(LoginSchema, 'body'), LocalGuard)
+	@traceDecorator
 	async login(@Request() req) {
 		return this.authService.giveTokens(req.user);
 	}

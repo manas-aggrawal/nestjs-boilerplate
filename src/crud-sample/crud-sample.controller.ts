@@ -17,11 +17,13 @@ import { FindOneSwaggerConfig } from './swagger/find-one.swagger';
 import { UpdateSwaggerConfig } from './swagger/update.swagger';
 import { CreateCrudSampleSchema } from './validators/create-crud-sample.schema';
 import { UpdateCrudSampleSchema } from './validators/update-crud-sample.schema';
+import { IsPublic } from 'src/auth/decorators/is-public';
 
 @Controller('crud-sample')
 export class CrudSampleController {
 	constructor(private readonly crudSampleService: CrudSampleService) {}
 
+	@IsPublic()
 	@Post('/')
 	@UseGuards(new Validator(CreateCrudSampleSchema, 'body'))
 	@CreateSwaggerConfig()
@@ -29,6 +31,7 @@ export class CrudSampleController {
 		return this.crudSampleService.create(req.body);
 	}
 
+	@IsPublic()
 	@Get('/')
 	@FindAllSwaggerConfig()
 	findAll() {
