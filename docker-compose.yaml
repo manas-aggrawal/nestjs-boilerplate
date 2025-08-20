@@ -1,0 +1,35 @@
+version: '3.3'
+services:
+  db:
+    image: postgres:14.6
+    restart: always
+    environment:
+      - POSTGRES_USER=${PG_USER}
+      - POSTGRES_PASSWORD=${PG_PASSWORD}
+      - POSTGRES_DB=${PG_DATABASE_NAME}
+    ports:
+      - ${PORT_DATABASE}:${PORT_DATABASE}
+  api:
+    build:
+      context: .
+      args:
+        NPM_TOKEN: ${NPM_TOKEN}
+    container_name: nest-bp
+    image: nest-bp
+    env_file:
+      - .env
+    ports:
+      - ${PORT}:${PORT}
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+    depends_on:
+      - db
+    links:
+      - db
+    volumes:
+      - '.:/src/'
+      - './node_modules:/src/node_modules/'
+volumes:
+  db:
+    driver: local
+    
