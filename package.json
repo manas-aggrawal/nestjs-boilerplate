@@ -53,12 +53,9 @@
 		"passport-local": "^1.0.0",
 		"reflect-metadata": "^0.1.13",
 		"rimraf": "^3.0.2",
-		"rxjs": "^7.2.0",
-		"validate-branch-name": "^1.3.0"
+		"rxjs": "^7.2.0"
 	},
 	"devDependencies": {
-		"@commitlint/cli": "^17.5.1",
-		"@commitlint/config-conventional": "^17.4.4",
 		"@nestjs/cli": "^9.0.0",
 		"@nestjs/schematics": "^9.0.0",
 		"@nestjs/testing": "^9.0.0",
@@ -72,7 +69,6 @@
 		"eslint": "^8.0.1",
 		"eslint-config-prettier": "^8.3.0",
 		"eslint-plugin-prettier": "^4.0.0",
-		"husky": "^8.0.3",
 		"jest": "28.1.3",
 		"prettier": "2.8.3",
 		"prisma": "^4.10.1",
@@ -100,14 +96,5 @@
 		],
 		"coverageDirectory": "../coverage",
 		"testEnvironment": "node"
-	},
-	"husky": {
-		"hooks": {
-			"pre-commit": "npx validate-branch-name"
-		}
-	},
-	"validate-branch-name": {
-		"pattern": "^(master|main|develop|uat){1}$|^(feature|bugfix|hotfix|release)/[A-Z]{1,}-[0-9]{1,}",
-		"errorMsg": "Please follow the branch naming convention, eg: feature/SG-1"
 	}
 }
