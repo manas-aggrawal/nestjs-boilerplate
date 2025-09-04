@@ -1,7 +1,7 @@
 version: '3.3'
 services:
   db:
-    image: postgres:14.6
+    image: postgres:latest
     restart: always
     environment:
       - POSTGRES_USER=${PG_USER}
@@ -12,8 +12,6 @@ services:
   api:
     build:
       context: .
-      args:
-        NPM_TOKEN: ${NPM_TOKEN}
     container_name: nest-bp
     image: nest-bp
     env_file:
@@ -32,4 +30,3 @@ services:
 volumes:
   db:
     driver: local
-    

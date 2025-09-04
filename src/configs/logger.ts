@@ -1,24 +1,76 @@
-import { ConsoleLogger } from '@nestjs/common';
+import { hostname } from 'os';
+import { Service } from 'typedi';
+import { createLogger, format, transports } from 'winston';
 
-export class CustomLogger extends ConsoleLogger {
-	private logger = (message, stack) => `[${stack}] ${message}`;
+@Service()
+export class Logger {
+	private logger;
+	private hostName: string = hostname();
+	private ctxData: Record<string, unknown>;
 
-	error(message: unknown, stack?: string, context?: string) {
-		super.error(this.logger(message, context || stack));
+	constructor() {
+		this.logger = createLogger({
+			format: format.combine(format.json({ deterministic: false })),
+			transports: [new transports.Console()],
+		});
 	}
-	warn(message: unknown, stack?: string, context?: string) {
-		super.warn(this.logger(message, context || stack));
+
+	public info(
+		message: string,
+		source: string,
+		data?: Record<string, unknown>,
+	): void {
+		this.log('info', message, source, data);
 	}
-	debug(message: unknown, stack?: string, context?: string) {
-		super.debug(this.logger(message, context || stack));
+	public warn(
+		message: string,
+		source: string,
+		data?: Record<string, unknown>,
+	): void {
+		this.log('warn', message, source, data);
 	}
-	verbose(message: unknown, stack?: string, context?: string) {
-		super.verbose(this.logger(message, context || stack));
+	public error(
+		message: string,
+		source: string,
+		data?: Record<string, unknown>,
+	): void {
+		this.log('error', message, source, data);
 	}
-	log(message: unknown, stack?: string, context?: string) {
-		super.log(this.logger(message, context || stack));
+	public debug(
+		message: string,
+		source: string,
+		data?: Record<string, unknown>,
+	): void {
+		this.log('debug', message, source, data);
 	}
-	// setLogLevels?(levels: LogLevel[]) {
-	// 	throw new Error('Method not implemented.');
-	// }
+
+	// this function is used to get request context
+	public contextData(ctx: Record<string, unknown>): void {
+		this.ctxData = ctx;
+	}
+
+	// this fn to add user context
+	public userContext(usrCtx: Record<string, unknown>): void {
+		this.ctxData.user = usrCtx;
+	}
+
+	private log(
+		level: string,
+		message: string,
+		source: string,
+		data?: Record<string, unknown>,
+	): void {
+		const logEntry = {
+			timestamp: new Date(),
+			level,
+			source,
+			message,
+			data,
+			context: this.ctxData,
+
+			hostname: this.hostName,
+		};
+		this.logger.log(logEntry);
+	}
 }
+export const logger = new Logger();
