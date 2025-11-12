@@ -2,13 +2,15 @@
 
 # NestJS Boilerplate
 
+> **Latest Update (v0.1.0)**: Migrated from ESLint/Prettier to Biome for faster, unified linting and formatting. See [releases](https://github.com/manas-aggrawal/nestjs-boilerplate/releases) for details.
+
 ## This boilerplate covers
 
 - JWT Token configuration
     - login & refresh token
 - Docker
 - Prisma
-- Eslint & Prettier
+- **Biome (Linting & Formatting)** ← Changed from "Eslint & Prettier"
 - Swagger documentation
 - Husky
 - Conventional Commits
@@ -26,6 +28,43 @@
 	- Controller files should follow this pattern: `<name>.controller.ts`
 	- Service files should follow this pattern: `<name>.service.ts`
   
+## Code Quality & Formatting
+
+This boilerplate uses [Biome](https://biomejs.dev/) for both linting and formatting, providing a fast all-in-one toolchain.
+
+### Configuration
+
+- **biome.json**: Contains all linting and formatting rules
+- **Key features**:
+  - Automatic import sorting
+  - Consistent code style (tabs, single quotes, semicolons)
+  - TypeScript-first with parameter decorator support
+  - Jest/Vitest test globals configured
+
+### Available Commands
+```bash
+# Format code
+npm run format
+
+# Run linter
+npm run lint
+
+# Run linter with auto-fix
+npm run lint:fix
+
+# Run both formatter + linter with auto-fix (recommended)
+npm run check:fix
+```
+
+### VS Code Integration
+
+Install the [Biome extension](https://marketplace.visualstudio.com/items?itemName=biomejs.biome) for automatic formatting on save.
+
+### Migration Notes
+
+- Biome replaces both ESLint and Prettier with a single, faster tool
+- Module resolution updated from deprecated `baseUrl` to `paths` configuration
+
 ## Project directory structure
 
 Nestjs architecture is based into modules, controllers and services. This boilerplate have the following core files:

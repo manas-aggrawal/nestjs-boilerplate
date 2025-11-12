@@ -1,4 +1,4 @@
-import { Span, trace, SpanStatusCode } from '@opentelemetry/api';
+import { Span, SpanStatusCode, trace } from '@opentelemetry/api';
 import { logger } from '@studiographene/nodejs-telemetry';
 
 // active span decorator

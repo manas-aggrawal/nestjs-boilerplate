@@ -8,7 +8,8 @@ import {
 	Request,
 	UseGuards,
 } from '@nestjs/common';
-import { Validator } from 'src/configs/validator.guard';
+import { IsPublic } from '@src/auth/decorators/is-public';
+import { Validator } from '@src/configs/validator.guard';
 import { CrudSampleService } from './crud-sample.service';
 import { CreateSwaggerConfig } from './swagger/create.swagger';
 import { DeleteSwaggerConfig } from './swagger/delete.swagger';
@@ -17,7 +18,6 @@ import { FindOneSwaggerConfig } from './swagger/find-one.swagger';
 import { UpdateSwaggerConfig } from './swagger/update.swagger';
 import { CreateCrudSampleSchema } from './validators/create-crud-sample.schema';
 import { UpdateCrudSampleSchema } from './validators/update-crud-sample.schema';
-import { IsPublic } from 'src/auth/decorators/is-public';
 
 @Controller('crud-sample')
 export class CrudSampleController {

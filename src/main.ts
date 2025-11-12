@@ -1,4 +1,5 @@
 import { adotInit, logger } from '@studiographene/nodejs-telemetry';
+
 adotInit('Pulse@1.0', '/health');
 
 import { ValidationPipe } from '@nestjs/common';

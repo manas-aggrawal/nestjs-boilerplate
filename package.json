@@ -20,9 +20,10 @@
 		"start:dev": "nest start --watch",
 		"start:debug": "nest start --debug --watch",
 		"start:prod": "node dist/main",
-		"lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
-		"lint:quiet": "eslint \"{src,apps,libs,test}/**/*.ts\" --quiet",
-		"lint:fix": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+		"format": "npx @biomejs/biome format --write",
+		"lint": "npx @biomejs/biome lint",
+		"lint:fix": "npx @biomejs/biome lint --write",
+		"check:fix": "npx @biomejs/biome check --write",
 		"test": "jest",
 		"test:watch": "jest --watch",
 		"test:cov": "jest --coverage",
@@ -30,6 +31,7 @@
 		"test:e2e": "jest --config ./test/jest-e2e.json"
 	},
 	"dependencies": {
+		"@biomejs/biome": "^2.3.5",
 		"@nestjs/axios": "^2.0.0",
 		"@nestjs/common": "^9.0.0",
 		"@nestjs/core": "^9.0.0",

@@ -7,6 +7,7 @@ import {
 	UseGuards,
 } from '@nestjs/common';
 import { Validator } from 'src/configs/validator.guard';
+import { traceDecorator } from 'src/core/trace-decorator';
 import { AuthService } from './auth.service';
 import { IsPublic } from './decorators/is-public';
 import { ForgotPasswordTokenGuard } from './guards/forgot-password-token.guard';
@@ -17,7 +18,6 @@ import { RefreshTokenSwaggerConfig } from './swagger/refresh-token.swagger';
 import { ForgotPasswordSchema } from './validators/forgot-password.schema';
 import { LoginSchema } from './validators/login.schema';
 import { UpdatePasswordSchema } from './validators/update-password.dto';
-import { traceDecorator } from 'src/core/trace-decorator';
 
 @Controller()
 export class AuthController {
