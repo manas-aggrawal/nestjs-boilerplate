@@ -2,6 +2,8 @@
 
 # NestJS Boilerplate
 
+> **Latest Update (v0.2.0)**: Added nest-winston logger configuration, removed buggy telemetry package. See [releases](https://github.com/manas-aggrawal/nestjs-boilerplate/releases) for details.
+
 > **Latest Update (v0.1.0)**: Migrated from ESLint/Prettier to Biome for faster, unified linting and formatting. See [releases](https://github.com/manas-aggrawal/nestjs-boilerplate/releases) for details.
 
 ## This boilerplate covers

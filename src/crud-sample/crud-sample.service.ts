@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '@src/prisma/prisma.service';
 import { CreateCrudSample } from './interfaces/create-crud-sample.interface';
 import { UpdateCrudSample } from './interfaces/update-crud-sample.interface';
 

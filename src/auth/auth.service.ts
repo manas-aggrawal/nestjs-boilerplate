@@ -1,9 +1,8 @@
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { traceDecorator } from '@studiographene/nodejs-telemetry';
 import * as bcrypt from 'bcryptjs';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { UserService } from 'src/user/user.service';
+import { PrismaService } from '@src/prisma/prisma.service';
+import { UserService } from '@src/user/user.service';
 import { DefaultPayload } from './interfaces/payload.interface';
 
 @Injectable()
@@ -33,7 +32,6 @@ export class AuthService {
 		});
 	}
 
-	@traceDecorator
 	async giveTokens(payload: DefaultPayload) {
 		const [access_token, refresh_token] = await Promise.all([
 			this.jwtService.sign(payload, {
