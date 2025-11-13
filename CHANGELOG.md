@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.0] - 2024-11-13
+
+### Fixed
+- Fixed logger initialization and configuration
+
+### Improved
+- Added nest-winston logging setup for better application startup visibility
+
 ## [0.1.0] - 2025-11-12
 
 ### Changed

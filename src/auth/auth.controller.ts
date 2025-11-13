@@ -6,8 +6,7 @@ import {
 	Request,
 	UseGuards,
 } from '@nestjs/common';
-import { Validator } from 'src/configs/validator.guard';
-import { traceDecorator } from 'src/core/trace-decorator';
+import { Validator } from '@src/configs/validator.guard';
 import { AuthService } from './auth.service';
 import { IsPublic } from './decorators/is-public';
 import { ForgotPasswordTokenGuard } from './guards/forgot-password-token.guard';
@@ -27,7 +26,6 @@ export class AuthController {
 	@Post('/login')
 	@LoginSwaggerConfig()
 	@UseGuards(new Validator(LoginSchema, 'body'), LocalGuard)
-	@traceDecorator
 	async login(@Request() req) {
 		return this.authService.giveTokens(req.user);
 	}
