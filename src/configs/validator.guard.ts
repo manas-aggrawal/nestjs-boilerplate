@@ -16,7 +16,10 @@ export class Validator implements CanActivate {
 		abortEarly: false,
 	};
 
-	constructor(private schema: Schema, private type: HttpTypes) {}
+	constructor(
+		private schema: Schema,
+		private type: HttpTypes,
+	) {}
 
 	canActivate(
 		context: ExecutionContext,

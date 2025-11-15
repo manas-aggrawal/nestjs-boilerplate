@@ -1,12 +1,35 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { WinstonModule } from 'nest-winston';
+import * as winston from 'winston';
 import { AppModule } from './app.module';
-import { logger } from './configs/logger';
 
 async function bootstrap() {
-	const app = await NestFactory.create(AppModule);
-
+	const logger = WinstonModule.createLogger({
+		level: 'info',
+		format: winston.format.combine(
+			winston.format.timestamp(),
+			winston.format.errors({ stack: true }),
+			winston.format.json(),
+		),
+		transports: [
+			new winston.transports.Console({
+				format: winston.format.combine(
+					winston.format.colorize(),
+					winston.format.simple(),
+				),
+			}),
+			new winston.transports.File({
+				filename: 'logs/error.log',
+				level: 'error',
+			}),
+			new winston.transports.File({
+				filename: 'logs/combined.log',
+			}),
+		],
+	});
+	const app = await NestFactory.create(AppModule, { logger });
 	app.useGlobalPipes(new ValidationPipe());
 	const PORT = process.env.PORT || 3333;
 
@@ -27,8 +50,7 @@ async function bootstrap() {
 		.build();
 	const document = SwaggerModule.createDocument(app, config);
 	SwaggerModule.setup('/docs', app, document);
-
 	await app.listen(PORT);
-	logger.info(`Server running on http://localhost:${PORT}`, 'App');
+	logger.log(`Server running on http://localhost:${PORT}`, 'App');
 }
 bootstrap();
