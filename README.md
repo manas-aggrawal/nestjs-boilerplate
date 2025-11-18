@@ -1,35 +1,80 @@
-# README
-
 # NestJS Boilerplate
 
-> **Latest Update (v0.2.0)**: Added nest-winston logger configuration, removed buggy telemetry package. See [releases](https://github.com/manas-aggrawal/nestjs-boilerplate/releases) for details.
+> **Latest Update (v1.0.0)**: Modernized stack with NestJS 11, TypeScript 5.9.3, Zod validation, comprehensive user registration API, Docker improvements, and enhanced Swagger documentation. See [releases](https://github.com/manas-aggrawal/nestjs-boilerplate/releases) for details.
 
-> **Latest Update (v0.1.0)**: Migrated from ESLint/Prettier to Biome for faster, unified linting and formatting. See [releases](https://github.com/manas-aggrawal/nestjs-boilerplate/releases) for details.
+> **Previous Update (v0.2.0)**: Added nest-winston logger configuration, removed buggy telemetry package. See [releases](https://github.com/manas-aggrawal/nestjs-boilerplate/releases) for details.
+
+> **Previous Update (v0.1.0)**: Migrated from ESLint/Prettier to Biome for faster, unified linting and formatting. See [releases](https://github.com/manas-aggrawal/nestjs-boilerplate/releases) for details.
 
 ## This boilerplate covers
 
-- JWT Token configuration
-    - login & refresh token
-- Docker
-- Prisma
-- **Biome (Linting & Formatting)** ← Changed from "Eslint & Prettier"
-- Swagger documentation
-- Husky
-- Conventional Commits
-- CRUD
-- Forgot Password
-- Validation with joi
+- **NestJS 11** - Latest version with modern TypeScript support
+- **JWT Token configuration**
+  - login & refresh token
+- **Docker & Docker Compose** - Containerized development environment
+- **Prisma ORM** - Type-safe database access with PostgreSQL
+- **Zod Validation** - Runtime type validation with automatic Swagger schema generation
+- **Biome (Linting & Formatting)** - Fast all-in-one toolchain
+- **Swagger/OpenAPI Documentation** - Auto-generated API documentation with interactive UI
+- **Winston Logger** - Structured logging with file and console outputs
+- **CRUD Operations** - Complete user management
+- **Forgot Password** - Password reset functionality
+- **Path Aliases** - Clean imports with `@src`, `@user`, `@auth`, etc.
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Node.js 18.17.0+ or 20.3.0+
+- Docker & Docker Compose
+- npm or yarn
+
+### Installation
+```bash
+# 1. Clone the repository
+git clone <repository-url>
+cd nestjs-boilerplate
+
+# 2. Copy environment file
+cp .env.example .env
+
+# 3. Start Docker containers
+npm run container:init
+
+# 4. Run database migrations
+npx prisma migrate dev --name init
+
+# 5. Access the application
+API: http://localhost:3001
+Swagger: http://localhost:3001/api/docs
+```
+
+## 🛠️ Tech Stack
+
+| Technology | Version | Purpose                |
+| ---------- | ------- | ---------------------- |
+| NestJS     | ^11.0.0 | Backend framework      |
+| TypeScript | ^5.3.3  | Type safety            |
+| Prisma     | Latest  | ORM & migrations       |
+| PostgreSQL | 16      | Database               |
+| Zod        | ^3.23.8 | Validation             |
+| nestjs-zod | ^5.0.1  | Zod-NestJS integration |
+| Swagger    | ^11.0.0 | API documentation      |
+| Winston    | Latest  | Logging                |
+| Biome      | Latest  | Linting & formatting   |
+| Docker     | -       | Containerization       |
 
 ## File and folder naming conventions
+
 - Classes and interfaces Names will be singular and follow `PascalCasing`
 - Any global constants or environment variables are in `all-caps` and follow `SNAKE_CASE`
 - Variable name should be `camelCase`
 - Folder and file name will be singular and follow `kebab-case`
 - Exceptions:
-	- Module files should follow this pattern: `<name>.module.ts`
-	- Controller files should follow this pattern: `<name>.controller.ts`
-	- Service files should follow this pattern: `<name>.service.ts`
-  
+  - Module files should follow this pattern: `<name>.module.ts`
+  - Controller files should follow this pattern: `<name>.controller.ts`
+  - Service files should follow this pattern: `<name>.service.ts`
+
 ## Code Quality & Formatting
 
 This boilerplate uses [Biome](https://biomejs.dev/) for both linting and formatting, providing a fast all-in-one toolchain.
@@ -62,424 +107,666 @@ npm run check:fix
 
 Install the [Biome extension](https://marketplace.visualstudio.com/items?itemName=biomejs.biome) for automatic formatting on save.
 
-### Migration Notes
-
-- Biome replaces both ESLint and Prettier with a single, faster tool
-- Module resolution updated from deprecated `baseUrl` to `paths` configuration
-
 ## Project directory structure
 
-Nestjs architecture is based into modules, controllers and services. This boilerplate have the following core files:
-
+NestJS architecture is based on modules, controllers, and services. This boilerplate has the following structure:
 ```bash
-src
-|-...
-|- app.module.ts
-|- app.controller.ts
-|- app.service.ts
-|- main.ts
-|- ...
+src/
+├── auth/                 # Authentication module
+│   ├── dto/
+│   ├── guards/
+│   ├── strategies/
+│   └── auth.controller.ts
+├── user/                 # User module
+│   ├── dto/             # Data transfer objects
+│   │   ├── create-user.dto.ts
+│   │   └── response/
+│   │       └── user-response.dto.ts
+│   ├── swagger/         # Swagger decorators
+│   │   ├── create-user.swagger.ts
+│   │   ├── get-users.swagger.ts
+│   │   └── index.ts
+│   ├── user.controller.ts
+│   ├── user.service.ts
+│   ├── user.constants.ts
+│   └── user.module.ts
+├── prisma/              # Prisma service
+│   ├── prisma.service.ts
+│   └── prisma.module.ts
+├── configs/             # Configuration files
+│   └── env-vars.ts      # Environment variables export
+├── middleware/          # Custom middleware
+├── common/              # Shared utilities
+├── app.module.ts        # Main application module
+└── main.ts              # Application entry point
+
+prisma/
+├── schema.prisma        # Database schema
+└── migrations/          # Migration history
+
+docker-compose.yml       # Docker configuration
+Dockerfile              # Container build instructions
 ```
 
-### app.module.ts
+### Core Files
+
+#### app.module.ts
 
 - This is the most important file in this application. This module file essentially bundles all the controllers and providers of our application together.
 
-### app.controller.ts
+#### app.controller.ts
 
 - In this file you will find all the routes related to our application itself, like a `/health` route to check application status.
 
-### app.service.ts
+#### app.service.ts
 
 - This service will include methods that will perform a certain operation. For example, a service to find all users.
 
-### main.ts
+#### main.ts
 
-- The entry file of our application, here you find the configs for our server and application in general like cors, ports, validation pipes and etc.
+- The entry file of our application, here you find the configs for our server and application in general like CORS, ports, validation pipes, Swagger setup, and Winston logger configuration.
 
 ## Secret management
 
-For store database configurations, jwt secrets and ports, this boilerplate uses a `.env` file with the following variables:
+For store database configurations, JWT secrets and ports, this boilerplate uses a `.env` file with the following variables:
+```env
+# Server Configuration
+PORT=3001
 
-```
-# Config
-PORT=...
-PORT_DATABASE=...
+# Database Configuration
+PORT_DATABASE=5433
+PG_USER=postgres
+PG_PASSWORD=postgres
+PG_DATABASE_NAME=nestdb
 
-# Postgres
-PG_USER="..."
-PG_PASSWORD="..."
-PG_DATABASE_NAME="..."
+# Database URL
+# For host machine (migrations)
+DATABASE_URL="postgresql://postgres:postgres@localhost:5433/nestdb?schema=public"
 
-# JWT
-JWT_ACCESS_TOKEN_SECRET="..."
-JWT_REFRESH_TOKEN_SECRET="..."
-
-DATABASE_URL="..."
-```
-
-> In this same project, theres a file called .env.example that we can use as a example to set a standard configuration into .env file.
-
-## Commit rules
-This project follows the Conventional Commits specification for creating standardized commit messages in our Git repository. This means that each commit message is structured in a consistent way, using a type, an optional scope, and a subject.
-
-Example:
-```
-<type>[optional scope]: <description>
-
-git commit -m "feat: create users"
+# JWT Tokens
+JWT_ACCESS_TOKEN_SECRET="your-access-token-secret"
+JWT_REFRESH_TOKEN_SECRET="your-refresh-token-secret"
 ```
 
-*Commits without this pattern will be blocked.*
+> In this same project, there's a file called `.env.example` that we can use as an example to set a standard configuration into `.env` file.
 
-More information at: [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/#summary)
+### Environment Variables in Code
 
-## Authentication
+Environment variables are exported from `src/configs/env-vars.ts` for type-safe access throughout the application:
+```typescript
+import { PORT, PG_USER, DATABASE_URL } from '@configs/env-vars';
+```
+
+## 🐳 Docker Setup
+
+### Docker Compose Services
+
+The boilerplate includes:
+- **PostgreSQL 16** - Database with persistent volumes
+- **NestJS API** - Application with hot reload in development
+
+### Docker Commands
+```bash
+# Start all services (PostgreSQL + API)
+npm run container:init
+# or
+docker-compose up -d
+
+# Stop services
+docker-compose down
+
+# Restart services
+docker-compose restart
+
+# Remove volumes (⚠️ deletes data)
+docker-compose down -v
+
+# Access API container shell
+npm run container:run
+# or
+docker-compose exec api sh
+
+# Access bash (if available)
+npm run container:run:bash
+```
+
+### Database Connection
+
+#### From Host Machine (DBeaver/pgAdmin)
+- **Host:** localhost
+- **Port:** 5432 (to avoid conflicts with local PostgreSQL)
+- **Database:** nestdb
+- **Username:** postgres
+- **Password:** postgres
+
+#### From Docker Container (API → Database)
+- **Host:** db (service name)
+- **Port:** 5432 (internal Docker network)
+
+## 🗄️ Database & Migrations
+
+### Prisma Commands
+```bash
+# Create and apply migration
+npx prisma migrate dev --name add_feature
+
+# Apply pending migrations (production)
+npx prisma migrate deploy
+
+# Generate Prisma Client
+npx prisma generate
+
+# Reset database (⚠️ deletes all data)
+npx prisma migrate reset
+
+# Check migration status
+npx prisma migrate status
+```
+
+### Migration Workflow
+
+**Development:**
+```bash
+# 1. Update schema.prisma
+# 2. Create migration
+npx prisma migrate dev --name add_user_role
+
+# 3. Migration is automatically applied
+```
+
+**Production:**
+```bash
+# Only apply pending migrations (safe, idempotent)
+npx prisma migrate deploy
+```
+
+### Create a New Schema (Prisma)
+
+Into the boilerplate, we have a file called `schema.prisma` in the `prisma/` folder. To add a new model:
+```prisma
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  username  String   @unique @db.VarChar(50)
+  email     String   @unique @db.VarChar(255)
+  password  String   @db.VarChar(255)
+  firstname String   @db.VarChar(50)
+  lastname  String   @db.VarChar(50)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+  @@index([username])
+}
+
+// Add your new model
+model Post {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  authorId    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  author      User     @relation(fields: [authorId], references: [id])
+}
+```
+
+Then create and apply the migration:
+```bash
+npx prisma migrate dev --name add_post_model
+```
+
+## 📝 API Documentation with Swagger
+
+### Access Swagger UI
+
+- **Interactive UI:** http://localhost:3001/api/docs
+- **JSON Schema:** http://localhost:3001/api/docs-json
+
+### Swagger Configuration Pattern
+
+Create reusable Swagger decorators for clean controllers:
+
+**1. Create Swagger decorator file:**
+```typescript
+// src/user/swagger/create-user.swagger.ts
+import { applyDecorators } from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiBadRequestResponse } from '@nestjs/swagger';
+import { UserResponseDto } from '@user/dto/response/user-response.dto';
+
+export const CreateUserSwagger = () =>
+  applyDecorators(
+    ApiOperation({ summary: 'Create a new user' }),
+    ApiResponse({
+      status: 201,
+      description: 'User created successfully',
+      type: UserResponseDto,
+    }),
+    ApiBadRequestResponse({
+      description: 'Invalid input data',
+    }),
+  );
+```
+
+**2. Use in controller:**
+```typescript
+// src/user/user.controller.ts
+import { Controller, Post, Body } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { CreateUserSwagger } from './swagger';
+import { CreateUserDto } from './dto/create-user.dto';
+
+@ApiTags('Users')
+@Controller('users')
+export class UserController {
+  @Post()
+  @CreateUserSwagger()
+  create(@Body() createUserDto: CreateUserDto) {
+    return this.userService.create(createUserDto);
+  }
+}
+```
+
+### Swagger Setup
+
+Make sure Swagger configuration is setup in `main.ts`:
+```typescript
+const config = new DocumentBuilder()
+  .setTitle('NestJS Boilerplate API')
+  .setDescription('The NestJS REST API backend framework')
+  .setVersion('1.0')
+  .addTag('Users')
+  .addTag('Auth')
+  .addBearerAuth(
+    { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+    'access-token',
+  )
+  .addBearerAuth(
+    { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+    'refresh-token',
+  )
+  .build();
+
+const document = SwaggerModule.createDocument(app, config);
+SwaggerModule.setup('api/docs', app, document);
+```
+
+## ✅ Validation with Zod
+
+This boilerplate uses **Zod** for runtime validation with automatic Swagger schema generation via `nestjs-zod`.
+
+### Creating DTOs with Zod
+```typescript
+// src/user/dto/create-user.dto.ts
+import { createZodDto } from 'nestjs-zod';
+import { z } from 'zod';
+
+export const CreateUserSchema = z.object({
+  email: z.string().email(),
+  password: z.string()
+    .min(8, 'Password must be at least 8 characters')
+    .regex(/[a-z]/, 'Must contain lowercase letter')
+    .regex(/[A-Z]/, 'Must contain uppercase letter')
+    .regex(/[0-9]/, 'Must contain number')
+    .regex(/[^a-zA-Z0-9]/, 'Must contain special character'),
+  firstname: z.string().min(2).max(50),
+  lastname: z.string().min(2).max(50),
+  username: z.string()
+    .min(5)
+    .max(50)
+    .toLowerCase()
+    .regex(/^[a-z0-9]+$/, 'Only lowercase letters and numbers'),
+});
+
+export class CreateUserDto extends createZodDto(CreateUserSchema) {}
+```
+
+### Password Requirements
+
+Passwords must contain:
+- Minimum 8 characters
+- At least one uppercase letter (A-Z)
+- At least one lowercase letter (a-z)
+- At least one number (0-9)
+- At least one special character (!@#$%^&*)
+
+### Global Validation Setup
+
+In `main.ts`:
+```typescript
+import { ZodValidationPipe } from 'nestjs-zod';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  
+  // Enable Zod validation globally
+  app.useGlobalPipes(new ZodValidationPipe());
+  
+  // ... rest of setup
+}
+```
+
+### Response DTOs
+
+For response documentation, use plain classes with `@ZodResponse({type: UserResponseDto})`:
+```typescript
+import { createZodDto } from 'nestjs-zod';
+import { z } from 'zod';
+
+const UserResponseSchema = z.object({
+	id: z.uuid().describe('User ID'),
+	username: z.string().describe('Username'),
+	email: z.email().describe('Email address'),
+	firstname: z.string().describe('First name'),
+	lastname: z.string().describe('Last name'),
+	createdAt: z.string().describe('Creation timestamp'),
+	updatedAt: z.coerce.string().describe('Last update timestamp'),
+});
+
+export class UserResponseDto extends createZodDto(UserResponseSchema) {}
+```
+
+## 🔐 Authentication
 
 It provides 3 kinds of authentication with [Passport strategies](https://docs.nestjs.com/security/authentication):
 
-- Local strategy
-    - User provides an username and a password then if these are valid, the API returns with the tokens, else it will return Unauthorised.
-    
-    > mostly used in login/sign in routes
-    > 
-- Access token strategy
-    - First token that is obtained from the local strategy. Is used to access all the routes of the API (with the exception of the refresh token one)
-    
-    > used in all the routes
-    > 
-- Refresh token strategy
-    - Second token that is obtained from the local strategy. Is used to access the refresh-token route and obtain new tokens, who are not expired
-    
-    > used in the refresh token route
-    > 
+- **Local strategy**
+  - User provides a username and a password then if these are valid, the API returns with the tokens, else it will return Unauthorised.
+  
+  > mostly used in login/sign in routes
 
-## Add a new API
+- **Access token strategy**
+  - First token that is obtained from the local strategy. Is used to access all the routes of the API (with the exception of the refresh token one)
+  
+  > used in all the routes
 
-1. Create a folder with the *name of the API* into the `src` folder your new API path should be: `.../nest-bp/src/nameOfAPI/`
-2. Create a **Module** for your API
-    
-    Theres two ways to do that:
-    
-    1. Using Nest CLI:
-        
-        ```bash
-        nest generate module <nameOfAPI>
-        ```
-        
-    2. Creating a file, into your API root folder, with the following pattern: `<nameOfAPI>.module.ts` And add this code into that file:
-        
-        ```tsx
-        import { Module } from '@nestjs/common';
-        @Module({
-                controllers: [],
-                providers: [],
-        })
-        export class <nameOfAPI>Module {}
-        ```
-        
-        And then, you have to add our new module into our app main module imports
-        
-        ```tsx
-        import { Module } from '@nestjs/common';
-        @Module({
-            imports: [..., <nameOfApi>Module],
-          controllers: [...],
-          providers: [...],
-        })
-        export class AppModule {}
-        ```
-        
-    
-    > click here some documentation about modules in Nest
-    > 
-3. Add a service for your API: Theres two ways to do that:
-    1. Using Nest CLI
-        
-        ```bash
-        nest generate service <nameOfAPI>
-        ```
-        
-    2. Creating a file, into your API root folder, with the following pattern: `<nameOfAPI>.service.ts` And add this code into that file:
-        
-        ```tsx
-        import { Injectable } from '@nestjs/common';
-        
-        @Injectable()
-        export class <nameOfAPI>Service {}
-        ```
-        
-        And then, you have to add our new service into our app main module providers:
-        
-        ```tsx
-        import { Module } from '@nestjs/common';
-        @Module({
-            imports: [...],
-          controllers: [...],
-          providers: [..., , <nameOfApi>Service],
-        })
-        export class AppModule {}
-        ```
-        
-    
-    > click here some documentation about services in Nest
-    > 
-4. (If your API needs routes) Add a controller for your API:
-    
-    Theres two ways to do that:
-    
-    1. Using Nest CLI
-        
-        ```bash
-        nest generate controller <nameOfAPI>
-        ```
-        
-    2. Creating a file, into your API root folder, with the following pattern: `<nameOfAPI>.controller.ts` And add this code into that file:
-        
-        ```tsx
-        import { Controller } from '@nestjs/common';
-        
-        @Controller()
-        export class <nameOfAPI>Controller {}
-        ```
-        
-        And then, you have to add our new **controller** into our app main module controllers:
-        
-        ```tsx
-        import { Module } from '@nestjs/common';
-        @Module({
-            imports: [...],
-          controllers: [..., <nameOfApi>Controller],
-          providers: [...],
-        })
-        export class AppModule {}
-        ```
-        
+- **Refresh token strategy**
+  - Second token that is obtained from the local strategy. Is used to access the refresh-token route and obtain new tokens, which are not expired
+  
+  > used in the refresh token route
 
-## Adding a new route to our API
+## 🛣️ Adding a New Route to Your API
 
-- Into the controller of your API, add a function with the follow decorators:
-    - HTTP Method (Required)
-    - Swagger Configuration (Optional)
-    - Swagger Tag (Optional)
-    - UseGuards (Optional)
-    - … etc
-- Basic route example for get all users
+Into the controller of your API, add a function with the following decorators:
 
-```tsx
-import { Controller } from '@nestjs/common';
+- HTTP Method (Required)
+- Swagger Configuration (Optional)
+- UseGuards (Optional)
 
-@Controller()
+**Basic route example:**
+```typescript
+import { Controller, Get, Post, Body } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { UserService } from './user.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserSwagger } from './swagger';
+
+@ApiTags('Users')
+@Controller('users')
 export class UserController {
-    constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) {}
 
-    @Get()
-    async getUsers() {
-        return this.userService.getAll()
-    }
+  @Get()
+  async getUsers() {
+    return this.userService.findAll();
+  }
+
+  @Post()
+  @ZodResponse({type: UserResponseDto})
+  async createUser(@Body() createUserDto: CreateUserDto) {
+    return this.userService.create(createUserDto);
+  }
 }
 ```
 
-> For use services in controllers, we have to inject through the constructor of controller class
-> 
+> For use services in controllers, we have to inject them through the constructor of the controller class
 
-## Create a new schema (Prisma)
 
-Into the boilerplate, we should have a file called `schema.prisma` with this content:
+## 🔑 Forgot Password
 
-```tsx
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+The forgot password logic consists of two steps:
 
-generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native", "linux-arm64-openssl-1.1.x"]
-}
+**1. Request Password Reset Token**
 
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+Send a GET HTTP request to `/forgot-password` passing the username in the body:
+```http
+GET /forgot-password
+Content-Type: application/json
+
+{
+  "username": "admin"
 }
 ```
 
-All we have to do is add a new model into this file, for example creating a `Post` model.
+For this example, this route will retrieve the token right away, but in a real case we have to create logic for the user to confirm their account with an email or other verification method.
 
-```tsx
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+**2. Update Password with Token**
 
-generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native", "linux-arm64-openssl-1.1.x"]
-}
+With the `forgot_password_token`, send a PATCH HTTP request to `/update-password` passing the desired new password:
+```http
+PATCH /update-password
+Content-Type: application/json
+Authorization: Bearer <forgot_password_token>
 
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
-model Post {
-  id   String @id @default(uuid())
-  name String
-    description String
+{
+  "password": "NewSecurePass123!"
 }
 ```
 
-And for it takes changes in the database, we should create a migration for that with the following command **(into the container)**:
+If the token is valid, the password will be updated.
 
+## 📋 Commit Rules
+
+This project follows the Conventional Commits specification for creating standardized commit messages in our Git repository. This means that each commit message is structured in a consistent way, using a type, an optional scope, and a subject.
+
+**Example:**
+```
+<type>[optional scope]: <description>
+
+git commit -m "feat: create users endpoint"
+```
+
+**Common types:**
+- `feat`: A new feature
+- `fix`: A bug fix
+- `docs`: Documentation only changes
+- `style`: Changes that don't affect code meaning
+- `refactor`: Code change that neither fixes a bug nor adds a feature
+- `perf`: Performance improvements
+- `test`: Adding missing tests
+- `chore`: Changes to build process or auxiliary tools
+
+*Commits without this pattern will be blocked by Husky.*
+
+More information at: [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/#summary)
+
+## 🚀 Available Commands
+
+### Development
 ```bash
-npm run migrate:new
+# Start development server (Docker)
+npm run container:init
+
+# Start development server (local)
+npm run start:dev
+
+# Start with debugging
+npm run start:debug
+
+# Build for production
+npm run build
+
+# Start production server
+npm run start:prod
 ```
 
-Then we have to input the name of the migration and thats it!
-
-## Documentation with Swagger
-
-With Nest, we can add swagger documentation easier because it great integration. All we have to do is:
-
-1. Create an file in the root of our desired API folder with the following pattern:
-    
-    `<nameOfRoute>.swagger.ts`
-    
-    > *is preferred that the name of the file follow the name of the route.*
-    > 
-2. And it should contain a function that returns a function called `applyDecorators` that wrap swagger decorators, like this:
-    
-    ```tsx
-    import { applyDecorators } from '@nestjs/common';
-    
-    export const <nameOfRoute>SwaggerConfig = () =>
-    	applyDecorators(
-    		// Swagger decorators here...
-    	);
-    ```
-    
-    - *This function is a wrap of Decorators, so it could be used as a Decorator itself.*
-3. Then add this decorator in our route.
-    
-    ```tsx
-    	...
-    	@<nameOfRoute>SwaggerConfig()
-    	async <nameOfRoute>(@Request() req) {
-    		return this.authService.giveTokens(req.user);
-    	}
-    ```
-    
-
-Make sure swagger configuration is setup in `main.ts` file. Here an example of swagger config:
-
-```tsx
-...
-const config = new DocumentBuilder()
-		.setTitle('Nest bp example')
-		.setDescription('The Nestjs boilerplate API description')
-		.setVersion('1.0')
-		.build();
-	const document = SwaggerModule.createDocument(app, config);
-	SwaggerModule.setup('/docs', app, document);
-...
-```
-
-## CRUD
-
-With NestJS creating a CRUD API is very simple, we just need a command:
-
-`nest generate resource <nameOfAPI>` 
-
-It will create a folder structure in our `src` folder like this:
-
+### Docker
 ```bash
-src
-|-...
-|- <nameOfAPI>
-	|- dto
-		|- create-<nameOfAPI>.dto.ts
-		|- update-<nameOfAPI>.dto.ts
-	|- entities
-		|- <nameOfAPI>.entity.ts
-	|- <nameOfAPI>.controller.spec
-	|- <nameOfAPI>.controller.ts
-	|- <nameOfAPI>.module.ts
-	|- <nameOfAPI>.crud-sample.service.spec
-	|- <nameOfAPI>.service.ts
-|- ...
+# Start containers
+npm run container:init
+docker-compose up -d
+
+# Access container shell
+npm run container:run
+
+# Access bash
+npm run container:run:bash
+
+# View logs
+docker-compose logs -f
+
+# Stop containers
+docker-compose down
 ```
 
-- `.dto` files are data transfer objects, we use use it to verify body's of our HTTP requests;
-- `.spec` files are tests files to unit test our controller routes & services
-- `.entity` files are our API entities 
+### Database
+```bash
+# Initialize database (migration + seed)
+npm run container:db:init
 
-Then we just have to implement our code into `<nameOfAPI>.service.ts` file.
-> For a manual implementation of this CRUD, theres a folder called `crud-sample` as a example of how to do it.
+# Create new migration
+npx prisma migrate dev --name <migration_name>
 
-## Forgot password
+# Apply migrations
+npx prisma migrate deploy
 
-The forgot password logic consist in two steps:
+# Generate Prisma Client
+npx prisma generate
 
- 1. Send a GET HTTP request to `/forgot-password` passing the username (in this case) in the body.
-	```
-		GET /forgot-password
-		BODY: {
-			"username": "admin" // send a valid username
-		}
-	```
-	For this example this route will retrieve the token right away, but in a real case we have to create a logic to user confirm his account with an email or anything else.
+# Open Prisma Studio
+npx prisma studio
 
- 2. With the `forgot_password_token`, now we have to send a PATCH HTTP request to `/update-password` passing the desired password to change from this user.
-	```
-		GET /update-password
-		BODY: {
-			"password": "123"
-		}
-	```
-
- 	If the token is valid, the password will be updated.
-
-## Validation with joi
-
-In order to validate our body, query or params, we have to use `Validator` Guard in our routes.
-
-We just have to pass an Joi `Schema` and a HttpType, like `body`, `params`, `query`,for example:
-
-```
-	@UseGuards(new Validator(<Schema>, <HttpType>))
+# Reset database
+npx prisma migrate reset
 ```
 
-## Commands
+### Code Quality
+```bash
+# Format code
+npm run format
 
-- Start project
-    
-    ```
-      npm run container:init
-    ```
-    
-- Access container shell (or bash)
-    
-    ```
-      npm run container:run
-      npm run container:run:bash
-    ```
-    
-- Config database (migration & seed)
-    
-    ```
-      npm run container:db:init
-    ```
-    
-- Create a new migration (inside container - run `npm run container:run` first)
-    
-    ```
-      npm run migrate:new
-    ```
-    
-- Migrate database (inside container - run `npm run container:run` first)
-    
-    ```
-      npm run migrate
-    ```
-    
-- Seed database (inside container - run `npm run container:run` first)
-    
-    ```
-      npm run seed
-    ```
+# Run linter
+npm run lint
+
+# Fix linting issues
+npm run lint:fix
+
+# Format + lint with auto-fix
+npm run check:fix
+```
+
+### Testing
+```bash
+# Run unit tests
+npm run test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Run tests with coverage
+npm run test:cov
+
+# Run e2e tests
+npm run test:e2e
+```
+
+## 🔧 TypeScript Configuration
+
+### Path Aliases
+
+The boilerplate uses TypeScript path aliases for cleaner imports:
+```typescript
+// Instead of:
+import { User } from '../../../user/user.entity';
+
+// Use:
+import { User } from '@user/user.entity';
+import { PrismaService } from '@src/prisma/prisma.service';
+import { AuthGuard } from '@auth/guards/auth.guard';
+import { PORT } from '@configs/env-vars';
+```
+
+### Configured Aliases
+
+- `@src/*` → `./src/*`
+- `@prisma/*` → `./prisma/*`
+- `@auth/*` → `./src/auth/*`
+- `@configs/*` → `./src/configs/*`
+- `@middleware/*` → `./src/middleware/*`
+- `@user/*` → `./src/user/*`
+
+## ⚠️ Common Issues & Solutions
+
+### Port 5432 Already in Use
+
+If you have local PostgreSQL running:
+- Docker uses port 5433 (already configured)
+- Or stop local PostgreSQL: `brew services stop postgresql`
+
+### TypeScript Deprecation Warnings
+
+Add to `tsconfig.json`:
+```json
+{
+  "compilerOptions": {
+    "ignoreDeprecations": "6.0"
+  }
+}
+```
+
+### Module Resolution Errors
+
+Ensure `tsconfig.json` has:
+```json
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node"
+  }
+}
+```
+
+### Zod Date Schema with Swagger
+
+Use plain classes with `@ApiProperty` for response DTOs instead of Zod schemas to avoid JSON Schema conversion issues.
+
+### Docker Container Not Starting
+```bash
+# Clean rebuild
+docker-compose down -v
+docker-compose up -d --build
+
+# Check logs
+docker-compose logs -f api
+```
+
+## 📄 License
+
+MIT
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📞 Support
+
+For issues and questions, please open a GitHub issue.
+
+---
+
+**Built with ❤️ using NestJS**
