@@ -1,4 +1,4 @@
-version: '3.3'
+version: "3.3"
 services:
   db:
     image: postgres:latest
@@ -8,7 +8,9 @@ services:
       - POSTGRES_PASSWORD=${PG_PASSWORD}
       - POSTGRES_DB=${PG_DATABASE_NAME}
     ports:
-      - ${PORT_DATABASE}:${PORT_DATABASE}
+      - "${PORT_DATABASE}:5432"
+    volumes:
+      - db:/var/lib/postgresql/data
   api:
     build:
       context: .
@@ -22,11 +24,9 @@ services:
       - DATABASE_URL=${DATABASE_URL}
     depends_on:
       - db
-    links:
-      - db
     volumes:
-      - '.:/src/'
-      - './node_modules:/src/node_modules/'
+      - ".:/src/"
+      - "./node_modules:/src/node_modules/"
 volumes:
   db:
     driver: local

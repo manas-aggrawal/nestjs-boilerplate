@@ -4,6 +4,11 @@ import * as bcrypt from 'bcryptjs';
 import { PrismaService } from '@src/prisma/prisma.service';
 import { UserService } from '@src/user/user.service';
 import { DefaultPayload } from './interfaces/payload.interface';
+import {
+	JWT_ACCESS_TOKEN_SECRET,
+	JWT_FORGOT_PASSWORD_SECRET,
+	JWT_REFRESH_TOKEN_SECRET,
+} from '@src/configs/env-vars';
 
 @Injectable()
 export class AuthService {
@@ -36,11 +41,11 @@ export class AuthService {
 		const [access_token, refresh_token] = await Promise.all([
 			this.jwtService.sign(payload, {
 				expiresIn: '1h',
-				secret: process.env.JWT_ACCESS_TOKEN_SECRET,
+				secret: JWT_ACCESS_TOKEN_SECRET,
 			}),
 			this.jwtService.sign(payload, {
 				expiresIn: '8h',
-				secret: process.env.JWT_REFRESH_TOKEN_SECRET,
+				secret: JWT_REFRESH_TOKEN_SECRET,
 			}),
 		]);
 		return {
@@ -62,7 +67,7 @@ export class AuthService {
 				{ ...user, password: undefined },
 				{
 					expiresIn: '15m',
-					secret: process.env.JWT_FORGOT_PASSWORD_SECRET,
+					secret: JWT_FORGOT_PASSWORD_SECRET,
 				},
 			);
 			return {

@@ -13,9 +13,17 @@ datasource db {
 
 // Test model user for login, must delete this model before start developing.
 model User {
-  id       String @id @default(uuid())
-  username String
-  password String
+  id        String   @id @default(uuid())
+  username  String   @unique() @db.VarChar(50)
+  firstname String   @db.VarChar(50)
+  lastname  String   @db.VarChar(50)
+  email     String   @unique() @db.VarChar(255)
+  password  String   @db.VarChar(255)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+  @@index([username])
 }
 
 model CrudSample {

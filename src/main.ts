@@ -1,9 +1,10 @@
-import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { WinstonModule } from 'nest-winston';
 import * as winston from 'winston';
-import { AppModule } from './app.module';
+import { AppModule } from '@src/app.module';
+import { PORT } from './configs/env-vars';
+import { ZodValidationPipe, cleanupOpenApiDoc } from 'nestjs-zod';
 
 async function bootstrap() {
 	const logger = WinstonModule.createLogger({
@@ -30,12 +31,12 @@ async function bootstrap() {
 		],
 	});
 	const app = await NestFactory.create(AppModule, { logger });
-	app.useGlobalPipes(new ValidationPipe());
-	const PORT = process.env.PORT || 3333;
+	app.useGlobalPipes(new ZodValidationPipe());
+	const port = PORT ?? 3333;
 
 	const config = new DocumentBuilder()
-		.setTitle('Nest bp example')
-		.setDescription('The Nestjs boilerplate API description')
+		.setTitle('Nest backend framework')
+		.setDescription('The Nestjs REST API backend framework')
 		.setVersion('1.0')
 		.addTag('Auth')
 		.addTag('Others')
@@ -49,8 +50,12 @@ async function bootstrap() {
 		)
 		.build();
 	const document = SwaggerModule.createDocument(app, config);
-	SwaggerModule.setup('/docs', app, document);
-	await app.listen(PORT);
-	logger.log(`Server running on http://localhost:${PORT}`, 'App');
+	SwaggerModule.setup('/api/docs', app, cleanupOpenApiDoc(document));
+	await app.listen(port);
+	logger.log(`Server running on http://localhost:${port}`, 'App');
+	logger.log(
+		`OpenAPI docs running on http://localhost:${port}/api/docs`,
+		'App',
+	);
 }
 bootstrap();
