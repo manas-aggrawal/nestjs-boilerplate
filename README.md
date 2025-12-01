@@ -1,11 +1,5 @@
 # NestJS Boilerplate
 
-> **Latest Update (v1.0.0)**: Modernized stack with NestJS 11, TypeScript 5.9.3, Zod validation, comprehensive user registration API, Docker improvements, and enhanced Swagger documentation. See [releases](https://github.com/manas-aggrawal/nestjs-boilerplate/releases) for details.
-
-> **Previous Update (v0.2.0)**: Added nest-winston logger configuration, removed buggy telemetry package. See [releases](https://github.com/manas-aggrawal/nestjs-boilerplate/releases) for details.
-
-> **Previous Update (v0.1.0)**: Migrated from ESLint/Prettier to Biome for faster, unified linting and formatting. See [releases](https://github.com/manas-aggrawal/nestjs-boilerplate/releases) for details.
-
 ## This boilerplate covers
 
 - **NestJS 11** - Latest version with modern TypeScript support
