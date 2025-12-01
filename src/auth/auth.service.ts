@@ -23,13 +23,18 @@ export class AuthService {
 	async validateUser(usernameField: string, password: string) {
 		const user = await this.prisma.user.findFirst({
 			where: {
-				username: usernameField,
+				OR: [{ email: usernameField }, { username: usernameField }],
 			},
 		});
+
 		if (user) {
 			const validatePassword = await bcrypt.compare(password, user.password);
 			if (validatePassword) {
-				return { ...user, password: undefined };
+				return {
+					...user,
+					createdAt: user.createdAt.toISOString(),
+					updatedAt: user.updatedAt.toISOString(),
+				};
 			}
 		}
 		throw new UnauthorizedException({

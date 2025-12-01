@@ -2,7 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.0.0] - 2024-11-17
+## [2.0.0] - 2025-12-01
+
+### Added
+- **Role-Based Access Control (RBAC)** - Granular permission system with `@AccessTo()` decorator
+- `Role` enum with `ADMIN` and `STANDARD` roles
+- `@AccessTo()` decorator for restricting routes to specific roles
+- `@IsPublic()` decorator for bypassing authentication on specific routes
+- Global `AccessTokenGuard` for automatic route protection
+- User role field in database schema
+
+### Changed
+- **BREAKING:** Upgraded Prisma from 4.x to 6.x
+- Updated `AccessTokenGuard` to handle both authentication and authorization
+- User model now includes `role` field with default value `STANDARD`
+- Login and register responses now include user role
+
+### Fixed
+- JWT secret mismatch between token signing and verification
+- Swagger bearer auth configuration for protected endpoints
+
+## [1.0.0] - 2025-11-17
 
 ### Added
 - User registration API endpoint (`POST /users`)
@@ -39,7 +59,7 @@ All notable changes to this project will be documented in this file.
 - Better error messages with Zod validation
 - Interactive API documentation with Swagger UI
 
-## [0.2.0] - 2024-11-13
+## [0.2.0] - 2025-11-13
 
 ### Fixed
 - Fixed logger initialization and configuration

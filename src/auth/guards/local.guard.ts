@@ -11,7 +11,7 @@ export class LocalGuard extends AuthGuard('local-strategy') {
 		return super.canActivate(context);
 	}
 
-	handleRequest(err, user) {
+	handleRequest(err, user, info) {
 		if (!user || err) {
 			throw new UnauthorizedException();
 		}

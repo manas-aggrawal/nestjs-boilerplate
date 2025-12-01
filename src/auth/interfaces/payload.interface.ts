@@ -1,5 +1,8 @@
+import { Role } from '@prisma/client';
+
 export interface DefaultPayload {
 	id: string;
+	email: string;
 	username: string;
-	password: string;
+	role: Role;
 }

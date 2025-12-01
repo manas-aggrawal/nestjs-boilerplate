@@ -11,6 +11,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  STANDARD
+  ADMIN
+}
+
 // Test model user for login, must delete this model before start developing.
 model User {
   id        String   @id @default(uuid())
@@ -19,6 +24,7 @@ model User {
   lastname  String   @db.VarChar(50)
   email     String   @unique() @db.VarChar(255)
   password  String   @db.VarChar(255)
+  role      Role     @default(STANDARD)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

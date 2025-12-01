@@ -10,9 +10,14 @@
 
 - **NestJS 11** - Latest version with modern TypeScript support
 - **JWT Token configuration**
-  - login & refresh token
+  - Access & refresh tokens
+  - Global authentication guard
+- **Role-Based Access Control (RBAC)**
+  - `@AccessTo()` decorator for role restrictions
+  - `@IsPublic()` decorator for public routes
+  - ADMIN and STANDARD roles
 - **Docker & Docker Compose** - Containerized development environment
-- **Prisma ORM** - Type-safe database access with PostgreSQL
+- **Prisma 6 ORM** - Type-safe database access with PostgreSQL
 - **Zod Validation** - Runtime type validation with automatic Swagger schema generation
 - **Biome (Linting & Formatting)** - Fast all-in-one toolchain
 - **Swagger/OpenAPI Documentation** - Auto-generated API documentation with interactive UI
@@ -25,7 +30,7 @@
 
 ### Prerequisites
 
-- Node.js 18.17.0+ or 20.3.0+
+- Node.js 22.13.0+
 - Docker & Docker Compose
 - npm or yarn
 
@@ -51,18 +56,18 @@ Swagger: http://localhost:3001/api/docs
 
 ## 🛠️ Tech Stack
 
-| Technology | Version | Purpose                |
-| ---------- | ------- | ---------------------- |
-| NestJS     | ^11.0.0 | Backend framework      |
-| TypeScript | ^5.3.3  | Type safety            |
-| Prisma     | Latest  | ORM & migrations       |
-| PostgreSQL | 16      | Database               |
-| Zod        | ^3.23.8 | Validation             |
-| nestjs-zod | ^5.0.1  | Zod-NestJS integration |
-| Swagger    | ^11.0.0 | API documentation      |
-| Winston    | Latest  | Logging                |
-| Biome      | Latest  | Linting & formatting   |
-| Docker     | -       | Containerization       |
+| Technology     | Version | Purpose                |
+| -------------- | ------- | ---------------------- |
+| NestJS         | ^11.0.0 | Backend framework      |
+| TypeScript     | ^5.9.3  | Type safety            |
+| Prisma         | ^6.19.0 | ORM & migrations       |
+| PostgreSQL     | 16      | Database               |
+| nestjs-zod     | ^5.0.1  | Zod-NestJS integration |
+| Passport       | 0.6.0   | Authentication         |
+| nestjs/swagger | ^11.0.0 | API documentation      |
+| Winston        | Latest  | Logging                |
+| Biome          | Latest  | Linting & formatting   |
+| Docker         | -       | Containerization       |
 
 ## File and folder naming conventions
 
@@ -477,25 +482,93 @@ const UserResponseSchema = z.object({
 export class UserResponseDto extends createZodDto(UserResponseSchema) {}
 ```
 
-## 🔐 Authentication
+## 🔐 Authentication & Authorization
 
-It provides 3 kinds of authentication with [Passport strategies](https://docs.nestjs.com/security/authentication):
+### Authentication Strategies
 
-- **Local strategy**
-  - User provides a username and a password then if these are valid, the API returns with the tokens, else it will return Unauthorised.
-  
-  > mostly used in login/sign in routes
+This boilerplate provides 3 authentication strategies with [Passport](https://docs.nestjs.com/security/authentication):
 
-- **Access token strategy**
-  - First token that is obtained from the local strategy. Is used to access all the routes of the API (with the exception of the refresh token one)
-  
-  > used in all the routes
+| Strategy          | Purpose                      | Usage                  |
+| ----------------- | ---------------------------- | ---------------------- |
+| **Local**         | Username/password validation | Login routes           |
+| **Access Token**  | JWT-based route protection   | All protected routes   |
+| **Refresh Token** | Obtain new tokens            | Token refresh endpoint |
 
-- **Refresh token strategy**
-  - Second token that is obtained from the local strategy. Is used to access the refresh-token route and obtain new tokens, which are not expired
-  
-  > used in the refresh token route
+### Role-Based Access Control (RBAC)
 
+The boilerplate includes a complete RBAC system with the following roles:
+```typescript
+enum Role {
+  ADMIN = 'ADMIN',
+  STANDARD = 'STANDARD',
+}
+```
+
+### Decorators
+
+| Decorator                        | Purpose                      | Example           |
+| -------------------------------- | ---------------------------- | ----------------- |
+| `@IsPublic()`                    | Skip authentication entirely | Login, Register   |
+| `@AccessTo(Role.ADMIN)`          | Restrict to specific roles   | Admin-only routes |
+| `@ApiBearerAuth('access-token')` | Enable Swagger auth UI       | Protected routes  |
+
+### Usage Examples
+
+**Public route (no authentication):**
+```typescript
+@IsPublic()
+@Post('/login')
+@UseGuards(LocalGuard)
+async login(@Body() body: LoginPayloadDto) {
+  // Anyone can access
+}
+```
+
+**Authenticated route (any valid token):**
+```typescript
+@Get('/profile')
+@ApiBearerAuth('access-token')
+async getProfile(@Request() req) {
+  // Any authenticated user can access
+  return req.user;
+}
+```
+
+**Role-restricted route:**
+```typescript
+@Get('/admin-dashboard')
+@ApiBearerAuth('access-token')
+@AccessTo(Role.ADMIN)
+async adminDashboard() {
+  // Only ADMIN role can access
+}
+```
+
+**Multiple roles allowed:**
+```typescript
+@Get('/reports')
+@ApiBearerAuth('access-token')
+@AccessTo(Role.ADMIN, Role.STANDARD)
+async getReports() {
+  // Both ADMIN and STANDARD roles can access
+}
+```
+
+### How It Works
+
+1. `AccessTokenGuard` is registered globally via `APP_GUARD`
+2. Every request passes through the guard
+3. Guard checks for `@IsPublic()` → skips auth if present
+4. Guard validates JWT token → attaches user to request
+5. Guard checks `@AccessTo()` roles → allows/denies based on user role
+
+### Testing Protected Routes in Swagger
+
+1. Call `/users/login` to get your `access_token`
+2. Click the **"Authorize"** button (lock icon) in Swagger UI
+3. Paste your token in the `access-token` field
+4. Click **"Authorize"** → **"Close"**
+5. Now all protected routes will include your token
 ## 🛣️ Adding a New Route to Your API
 
 Into the controller of your API, add a function with the following decorators:

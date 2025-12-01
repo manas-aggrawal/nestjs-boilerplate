@@ -1,3 +1,4 @@
+import { Role } from '@prisma/client';
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 
@@ -28,6 +29,7 @@ const CreateUserSchema = z.object({
 			/^[a-z0-9]+$/,
 			'Username can only contain lowercase letters and numbers',
 		),
+	role: z.enum(Role),
 });
 
 export class CreateUserDto extends createZodDto(CreateUserSchema) {}
