@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.0.0] - 2026-04-24
+
+### Added
+- **Helmet.js** — 15+ security headers (CSP, HSTS, X-Frame-Options, etc.) applied globally via `main.ts`
+- **Rate limiting** (`@nestjs/throttler`) — per-endpoint throttle guards on all auth and user routes (register: 10/min, login: 10/min, forgot-password: 5/min, reset-password: 5/min)
+- **CORS hardening** — `app.enableCors()` with an origin allowlist driven by the `ALLOWED_ORIGINS` env var (comma-separated). Credentials and standard HTTP methods enabled. CORS is disabled entirely when `ALLOWED_ORIGINS` is unset (e.g. private/internal APIs)
+- **Request body size limit** — `body-parser` JSON and URL-encoded middleware capped at 10 mb to prevent large-payload DoS attacks
+- **`tsBuildInfoFile`** in `tsconfig.json` — incremental TypeScript cache now lives inside `dist/` so `rimraf dist` always produces a clean, correct build
+- **Biome `assist` config** — `organizeImports` enabled via the Biome v2 `assist.actions.source` API; replaces the v1 `organizeImports` top-level key
+- **Unified user DTOs** — `user.request.ts` and `user.response.ts` consolidate all request/response shapes for the user module
+- **`change-password` endpoint** (`PATCH /users/change-password`) — lets authenticated users change their password with current-password verification
+- **`delete-me` endpoint** (`DELETE /users/me`) — lets authenticated users permanently delete their own account
+- **New env vars** — `ALLOWED_ORIGINS`, `JWT_FORGOT_PASSWORD_TOKEN_SECRET`
+
+### Changed
+- **BREAKING:** Removed `crud-sample` module — the generic CRUD scaffold has been removed; use the user module as a reference instead
+- **BREAKING:** User DTO structure reorganised — `create-user.request.ts`, `login.request.ts`, `create-user.response.ts` replaced by unified `user.request.ts` / `user.response.ts`
+- `user.controller.ts` fully rewritten — cleaner route grouping (registration/login, password reset flow, own profile, admin), Zod response types on every endpoint
+- `user.service.ts` expanded — dedicated methods for `getMe`, `updateMe`, `deleteMe`, `changePassword`, `findAll`, `findById`
+- `auth.controller.ts` simplified — login swagger inline, removed separate swagger file
+- `app.module.ts` updated to remove crud-sample module
+
+### Fixed
+- TypeScript incremental build silently skipping emit when `dist/` was deleted but `.tsbuildinfo` remained — fixed by co-locating the cache file inside `dist/`
+- Biome v2 warning `organizeImports` not allowed at top level — migrated to `assist.actions.source.organizeImports`
+
 ## [2.0.0] - 2025-12-01
 
 ### Added

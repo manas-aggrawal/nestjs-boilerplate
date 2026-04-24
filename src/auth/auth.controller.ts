@@ -1,60 +1,28 @@
-import {
-	Controller,
-	Get,
-	Patch,
-	Post,
-	Request,
-	UseGuards,
-} from '@nestjs/common';
-import { Validator } from '@src/configs/validator.guard';
+import { Controller, Get, Request, UseGuards } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { IsPublic } from './decorators/is-public';
-import { ForgotPasswordTokenGuard } from './guards/forgot-password-token.guard';
-import { LocalGuard } from './guards/local.guard';
 import { RefreshTokenGuard } from './guards/refresh-token.guard';
-import { LoginSwaggerConfig } from './swagger/login.swagger';
 import { RefreshTokenSwaggerConfig } from './swagger/refresh-token.swagger';
-import { ForgotPasswordSchema } from './validators/forgot-password.schema';
-import { LoginSchema } from './validators/login.schema';
-import { UpdatePasswordSchema } from './validators/update-password.dto';
 
-@Controller()
+@ApiTags('Auth')
+@Controller('auth')
 export class AuthController {
 	constructor(private readonly authService: AuthService) {}
 
-	@IsPublic()
-	@Post('/login')
-	@LoginSwaggerConfig()
-	@UseGuards(new Validator(LoginSchema, 'body'), LocalGuard)
-	async login(@Request() req) {
-		return this.authService.giveTokens(req.user);
-	}
-
+	/**
+	 * Issues a new access token and refresh token using a valid refresh token.
+	 * The client should call this when the access token expires (1h) to get a
+	 * new one without requiring the user to log in again.
+	 *
+	 * Pass the refresh token as a Bearer token in the Authorization header.
+	 * The RefreshTokenGuard validates it before this handler runs.
+	 */
 	@IsPublic()
 	@UseGuards(RefreshTokenGuard)
 	@RefreshTokenSwaggerConfig()
 	@Get('/refresh-token')
 	async refreshToken(@Request() req) {
 		return this.authService.giveTokens(req.user);
-	}
-
-	@IsPublic()
-	@UseGuards(new Validator(ForgotPasswordSchema, 'body'))
-	@Get('/forgot-password')
-	async forgotPassword(@Request() req) {
-		return await this.authService.forgotPassword(req.body.username);
-	}
-
-	@IsPublic()
-	@Patch('/update-password')
-	@UseGuards(
-		new Validator(UpdatePasswordSchema, 'body'),
-		ForgotPasswordTokenGuard,
-	)
-	async updatePassword(@Request() req) {
-		return await this.authService.updatePassword(
-			req.body.password,
-			req.user.id,
-		);
 	}
 }

@@ -1,6 +1,14 @@
 {
 	"$schema": "https://biomejs.dev/schemas/2.3.5/schema.json",
 	"files": {},
+	"assist": {
+		"enabled": true,
+		"actions": {
+			"source": {
+				"organizeImports": "on"
+			}
+		}
+	},
 	"formatter": {
 		"enabled": true,
 		"indentStyle": "tab",
