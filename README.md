@@ -3,6 +3,11 @@
 ## This boilerplate covers
 
 - **NestJS 11** - Latest version with modern TypeScript support
+- **Security hardening**
+  - Helmet.js for HTTP security headers (HSTS, X-Frame-Options, X-Content-Type-Options, etc.)
+  - Rate limiting via `@nestjs/throttler` with per-endpoint overrides
+  - CORS with environment-driven origin allowlist
+  - Request body size cap (10 mb) to prevent large-payload DoS
 - **JWT Token configuration**
   - Access & refresh tokens
   - Global authentication guard
@@ -13,11 +18,11 @@
 - **Docker & Docker Compose** - Containerized development environment
 - **Prisma 6 ORM** - Type-safe database access with PostgreSQL
 - **Zod Validation** - Runtime type validation with automatic Swagger schema generation
-- **Biome (Linting & Formatting)** - Fast all-in-one toolchain
+- **Biome (Linting & Formatting)** - Fast all-in-one toolchain with automatic import sorting
 - **Swagger/OpenAPI Documentation** - Auto-generated API documentation with interactive UI
 - **Winston Logger** - Structured logging with file and console outputs
-- **CRUD Operations** - Complete user management
-- **Forgot Password** - Password reset functionality
+- **Complete user management** - Register, login, profile, change password, delete account
+- **Forgot Password** - Token-based password reset flow
 - **Path Aliases** - Clean imports with `@src`, `@user`, `@auth`, etc.
 
 ## 🚀 Quick Start

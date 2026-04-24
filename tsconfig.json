@@ -9,7 +9,8 @@
 		"target": "ES2021",
 		"sourceMap": true,
 		"outDir": "./dist",
-		"baseUrl": "./",
+		"tsBuildInfoFile": "./dist/tsconfig.build.tsbuildinfo",
+		"rootDir": "./src",
 		"moduleResolution": "node16",
 		"paths": {
 			"@src/*": ["./src/*"],

@@ -1,4 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
+import { SkipThrottle } from '@nestjs/throttler';
 import { ApiTags } from '@nestjs/swagger';
 import {
 	HealthCheck,
@@ -17,6 +18,7 @@ export class HealthController {
 	) {}
 
 	@IsPublic()
+	@SkipThrottle()
 	@Get('/health')
 	@ApiTags('Others')
 	@HealthCheck()

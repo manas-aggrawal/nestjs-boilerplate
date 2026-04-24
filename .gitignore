@@ -36,3 +36,9 @@ lerna-debug.log*
 
 # Env
 .env
+
+# TypeScript incremental build cache
+tsconfig.build.tsbuildinfo
+
+# Claude Code
+.claude/
